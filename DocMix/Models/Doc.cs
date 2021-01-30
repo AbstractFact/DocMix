@@ -1,5 +1,6 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
+using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,6 +17,7 @@ namespace DocMix.Models
         [BsonElement("Name")]
         public string Name { get; set; }
 
+        [BsonElement("Category")]
         public string Category { get; set; }
 
         public string Author { get; set; }

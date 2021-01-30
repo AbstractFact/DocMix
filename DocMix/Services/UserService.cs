@@ -39,5 +39,10 @@ namespace DocMix.Services
 
         public void Remove(string id) =>
             _users.DeleteOne(u => u.ID == id);
+
+        public User Login(string username, string password)
+        {
+            return _users.Find<User>(u => u.Username == username && u.Password==password).FirstOrDefault();
+        }
     }
 }

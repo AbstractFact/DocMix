@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using DocMix.Services;
 using DocMix.Models;
+using MongoDB.Driver;
 
 namespace DocMix.Controllers
 {
@@ -41,7 +42,7 @@ namespace DocMix.Controllers
         {
             _usersService.Create(user);
 
-            return CreatedAtRoute("GetUser", new { id = user.ID.ToString() }, user);//???
+            return CreatedAtRoute("GetUser", new { id = user.ID.ToString() }, user);
         }
 
         [HttpPut("{id:length(24)}")]
@@ -72,6 +73,17 @@ namespace DocMix.Controllers
             _usersService.Remove(user.ID);
 
             return NoContent();
+        }
+
+        [HttpPost("Login")]
+        public ActionResult<User> Login([FromBody] List<string> user)
+        {
+            User res = _usersService.Login(user[0], user[1]);
+
+            if (res!=null)
+                return Ok(res);
+            else
+                return NotFound();
         }
     }
 }

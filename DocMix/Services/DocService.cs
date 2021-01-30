@@ -10,6 +10,7 @@ namespace DocMix.Services
     public class DocService
     {
         private readonly IMongoCollection<Doc> _docs;
+        private readonly IMongoCollection<User> _users;
 
         public DocService(IDocMixDatabaseSettings settings)
         {
@@ -17,6 +18,7 @@ namespace DocMix.Services
             var database = client.GetDatabase(settings.DatabaseName);
 
             _docs = database.GetCollection<Doc>("Docs");
+            _users = database.GetCollection<User>("Users");
         }
 
         public List<Doc> Get() =>
@@ -25,9 +27,13 @@ namespace DocMix.Services
         public Doc Get(string id) =>
             _docs.Find<Doc>(d => d.ID == id).FirstOrDefault();
 
-        public Doc Create(Doc doc)
+        public Doc Create(Doc doc, string author)
         {
+            //doc.Author = new MongoDBRef("Users", author);
+            doc.Author = author;
+
             _docs.InsertOne(doc);
+
             return doc;
         }
 
