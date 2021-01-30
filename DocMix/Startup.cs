@@ -37,6 +37,7 @@ namespace DocMix
                 sp.GetRequiredService<IOptions<DocMixDatabaseSettings>>().Value);
 
             services.AddSingleton<DocService>();
+            services.AddSingleton<UserService>();
 
             services.AddControllers();
         }

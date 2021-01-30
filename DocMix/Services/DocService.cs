@@ -16,7 +16,7 @@ namespace DocMix.Services
             var client = new MongoClient(settings.ConnectionString);
             var database = client.GetDatabase(settings.DatabaseName);
 
-            _docs = database.GetCollection<Doc>(settings.DocMixCollectionName);
+            _docs = database.GetCollection<Doc>("Docs");
         }
 
         public List<Doc> Get() =>
