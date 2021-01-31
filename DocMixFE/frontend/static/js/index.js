@@ -162,3 +162,6 @@ async function handleDeleteDoc()
     await view.DeleteDoc();
     navigateTo("/docs");
 }
+
+
+//Sacuvati u localStorage.user i listu dokumenata, i promeniti u Doc servisu funkciju Create (da radi Push)

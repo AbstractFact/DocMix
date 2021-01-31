@@ -98,12 +98,12 @@ namespace DocMix.Controllers
         }
 
         [HttpDelete("DeleteDoc")]
-        public ActionResult<List<MyDoc>> DeleteDoc([FromBody] List<string> user)
+        public ActionResult DeleteDoc([FromBody] List<string> user)
         {
-            User res = _usersService.DeleteDoc(user[0], user[1]);
+            bool res = _usersService.DeleteDoc(user[0], user[1]);
 
-            if (res != null)
-                return Ok(res);
+            if (res != false)
+                return Ok();
             else
                 return NotFound();
         }

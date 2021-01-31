@@ -55,7 +55,7 @@ export default class extends AbstractView {
             localStorage.user=JSON.stringify(user);
             localStorage.logged=1;
 
-            alert("Welcome to DocMix " + username); 
+            alert("Welcome to DocMix " + username);
         }                                                   
     }     
 }

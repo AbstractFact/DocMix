@@ -37,10 +37,10 @@ namespace DocMix.Services
             mydoc.ID = doc.ID;
             mydoc.Name = doc.Name;
             mydoc.Category = doc.Category;
-            
-            User user = _users.Find<User>(u => u.ID == doc.Author.ID).FirstOrDefault();
-            user.MyDocs.Add(mydoc);
-            _users.ReplaceOne(d => d.ID == doc.Author.ID, user);
+
+            var filter = Builders<User>.Filter.Where(u => u.ID == doc.Author.ID);
+            var update = Builders<User>.Update.Push("MyDocs", mydoc);
+            _users.UpdateOne(filter, update);
 
             return doc;
         }

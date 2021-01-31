@@ -51,15 +51,13 @@ namespace DocMix.Services
             return user.MyDocs;
         }
 
-        public User DeleteDoc(string author, string doc)
+        public bool DeleteDoc(string author, string doc)
         {
-            User user = _users.Find<User>(u => u.ID == author).FirstOrDefault();
-
-            var filter = Builders<User>.Filter.Where(ym => ym.ID == author);
-            var update = Builders<User>.Update.PullFilter(ym => ym.MyDocs, Builders<MyDoc>.Filter.Where(nm => nm.ID == doc));
+            var filter = Builders<User>.Filter.Where(u => u.ID == author);
+            var update = Builders<User>.Update.PullFilter(u => u.MyDocs, Builders<MyDoc>.Filter.Where(d => d.ID == doc));
             _users.UpdateOne(filter, update);
 
-            return user;
+            return true;
         }
     }
 }
