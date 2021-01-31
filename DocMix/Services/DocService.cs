@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using DocMix.Models;
+using MongoDB.Bson;
 using MongoDB.Driver;
 using Newtonsoft.Json;
 
@@ -30,12 +31,16 @@ namespace DocMix.Services
 
         public Doc Create(Doc doc)
         {
-            //doc.Author = new {id=author, name=}
-            //doc.Author = author;
-
-            //doc.Author = JsonConvert.DeserializeObject<Object>((string)doc.Author);
-
             _docs.InsertOne(doc);
+         
+            MyDoc mydoc = new MyDoc();
+            mydoc.ID = doc.ID;
+            mydoc.Name = doc.Name;
+            mydoc.Category = doc.Category;
+            
+            User user = _users.Find<User>(u => u.ID == doc.Author.ID).FirstOrDefault();
+            user.MyDocs.Add(mydoc);
+            _users.ReplaceOne(d => d.ID == doc.Author.ID, user);
 
             return doc;
         }

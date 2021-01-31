@@ -3,6 +3,7 @@ import Docs from "./views/Docs.js";
 import DocView from "./views/DocView.js";
 import Login from "./views/Login.js";
 import Signup from "./views/Signup.js";
+import MyDocs from "./views/MyDocs.js";
 
 var view;
 
@@ -44,6 +45,7 @@ const router = async () => {
         { path: "/", view: Home },
         { path: "/docs", view: Docs },
         { path: "/docs/:id", view: DocView },
+        { path: "/mydocs", view: MyDocs },
         { path: "/login", view: Login },
         { path: "/signup", view: Signup }
     ];
@@ -99,6 +101,16 @@ document.addEventListener("DOMContentLoaded", () => {
             e.preventDefault();
             handleAddDoc();
         }
+
+        if (e.target.matches("[editDocBtn]")) {
+            e.preventDefault();
+            handleEditDoc();
+        }
+
+        if (e.target.matches("[deleteDocBtn]")) {
+            e.preventDefault();
+            handleDeleteDoc();
+        }
     });
 
     router();
@@ -137,4 +149,16 @@ async function handleAddDoc()
 {
     await view.AddDoc();
     location.reload();
+}
+
+async function handleEditDoc()
+{
+    await view.EditDoc();
+    location.reload();
+}
+
+async function handleDeleteDoc()
+{
+    await view.DeleteDoc();
+    navigateTo("/docs");
 }

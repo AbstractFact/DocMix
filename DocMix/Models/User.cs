@@ -24,5 +24,10 @@ namespace DocMix.Models
         public string Password { get; set; }
 
         public List<MyDoc> MyDocs { get; set; }
+
+        public User()
+        {
+            MyDocs = new List<MyDoc>();
+        }
     }
 }

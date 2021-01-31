@@ -57,11 +57,9 @@ export default class extends AbstractView {
         else
         {
             const json = await response.json();
-            var user = new Object();
-                user.id = json.id;
-                user.name = json.name;
+            var user = {"id":json.ID, "name":json.Name};
 
-            localStorage.user=user;
+            localStorage.user=JSON.stringify(user);
             localStorage.logged=1;
 
             alert("Welcome to DocMix "+username); 

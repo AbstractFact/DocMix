@@ -85,5 +85,27 @@ namespace DocMix.Controllers
             else
                 return NotFound();
         }
+
+        [HttpGet("GetUserDocs/{id}")]
+        public ActionResult<List<MyDoc>> GetUserDocs(string id)
+        {
+            List<MyDoc> res = _usersService.GetUserDocs(id);
+
+            if (res != null)
+                return Ok(res);
+            else
+                return NotFound();
+        }
+
+        [HttpDelete("DeleteDoc")]
+        public ActionResult<List<MyDoc>> DeleteDoc([FromBody] List<string> user)
+        {
+            User res = _usersService.DeleteDoc(user[0], user[1]);
+
+            if (res != null)
+                return Ok(res);
+            else
+                return NotFound();
+        }
     }
 }
