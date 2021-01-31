@@ -22,5 +22,7 @@ namespace DocMix.Models
 
         [BsonElement("Password")]
         public string Password { get; set; }
+
+        public List<MyDoc> MyDocs { get; set; }
     }
 }

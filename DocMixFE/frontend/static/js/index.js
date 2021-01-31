@@ -127,7 +127,7 @@ async function handleSignup()
 
 function logout()
 {
-    localStorage.userid="";
+    localStorage.user=0;
     localStorage.logged=0;
     navigateTo("/");
     location.reload();

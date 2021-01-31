@@ -44,17 +44,18 @@ export default class extends AbstractView {
         if (!response.ok) 
         {
             alert("User not found!");
-            localStorage.userid=0;
+            localStorage.user=0;
             localStorage.logged=0;
         }
         else
         {
             const json = await response.json();
+            var user = {"id":json.ID, "name":json.Name};
 
-            localStorage.userid=json["id"];
+            localStorage.user=JSON.stringify(user);
             localStorage.logged=1;
 
-            alert("Welcome to DocMix "+username); 
+            alert("Welcome to DocMix " + username); 
         }                                                   
     }     
 }

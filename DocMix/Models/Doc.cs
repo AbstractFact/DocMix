@@ -1,6 +1,7 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Driver;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,11 +16,19 @@ namespace DocMix.Models
         public string ID { get; set; }
 
         [BsonElement("Name")]
+        [JsonProperty("Name")]
         public string Name { get; set; }
 
         [BsonElement("Category")]
+        [JsonProperty("Category")]
         public string Category { get; set; }
 
-        public string Author { get; set; }
+        [BsonElement("Author")]
+        [JsonProperty("Author")]
+        public Author Author { get; set; }
+
+        [BsonElement("Pages")]
+        [JsonProperty("Pages")]
+        public int Pages { get; set; }
     }
 }

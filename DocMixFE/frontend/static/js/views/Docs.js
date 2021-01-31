@@ -31,9 +31,7 @@ export default class extends AbstractView {
         .then(p => p.json().then(data => {
 
             data.forEach(d => {
-                const doc = new Doc(d["id"], d["name"], d["category"], d["author"], d["pages"]);
-                console.log(doc);
-                console.log(d["author"]);
+                const doc = new Doc(d["ID"], d["Name"], d["Category"], d["Author"]["Name"], d["Pages"]);
                 html+=`
                     <tr>
                     <th scope="row">${++i}</th>
@@ -83,11 +81,11 @@ export default class extends AbstractView {
         const name = addDocForm['inputName'].value;
         const category = addDocForm['inputCategory'].value;
 
-        const response =  await  fetch("https://localhost:44397/api/Doc/"+localStorage.userid, { method: "POST",
+        const response =  await  fetch("https://localhost:44397/api/Doc", { method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({ "name": name, "category": category})
+            body: JSON.stringify({ "name": name, "category": category, "author": JSON.parse(localStorage.user), "pages": 0})
         });
 
         if (response.ok) {

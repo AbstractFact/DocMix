@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using DocMix.Models;
 using MongoDB.Driver;
+using Newtonsoft.Json;
 
 namespace DocMix.Services
 {
@@ -27,10 +28,12 @@ namespace DocMix.Services
         public Doc Get(string id) =>
             _docs.Find<Doc>(d => d.ID == id).FirstOrDefault();
 
-        public Doc Create(Doc doc, string author)
+        public Doc Create(Doc doc)
         {
-            //doc.Author = new MongoDBRef("Users", author);
-            doc.Author = author;
+            //doc.Author = new {id=author, name=}
+            //doc.Author = author;
+
+            //doc.Author = JsonConvert.DeserializeObject<Object>((string)doc.Author);
 
             _docs.InsertOne(doc);
 

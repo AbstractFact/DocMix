@@ -39,7 +39,8 @@ namespace DocMix
             services.AddSingleton<DocService>();
             services.AddSingleton<UserService>();
 
-            services.AddControllers();
+            services.AddControllers()
+                .AddNewtonsoftJson(options => options.UseMemberCasing());
 
             services.AddCors(options =>
             {

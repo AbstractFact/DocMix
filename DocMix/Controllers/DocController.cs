@@ -36,10 +36,10 @@ namespace DocMix.Controllers
             return doc;
         }
 
-        [HttpPost("{author}")]
-        public ActionResult<Doc> Create(Doc doc, string author)
+        [HttpPost]
+        public ActionResult<Doc> Create(Doc doc)
         {
-            _docsService.Create(doc, author);
+            _docsService.Create(doc);
 
             return CreatedAtRoute("GetDoc", new { id = doc.ID.ToString() }, doc);
         }

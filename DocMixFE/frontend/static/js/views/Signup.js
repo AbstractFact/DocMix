@@ -4,7 +4,6 @@ export default class extends AbstractView {
     constructor(params) {
         super(params);
         this.postId = params.id;
-        this.userID = params.userID;
         this.setTitle("Signup");
     }
 
@@ -52,14 +51,17 @@ export default class extends AbstractView {
         if (!response.ok)
         {
             alert("User already exists!");
-            localStorage.userid=0;
+            localStorage.user=0;
             localStorage.logged=0;
         }
         else
         {
             const json = await response.json();
+            var user = new Object();
+                user.id = json.id;
+                user.name = json.name;
 
-            localStorage.userid=json["id"];
+            localStorage.user=user;
             localStorage.logged=1;
 
             alert("Welcome to DocMix "+username); 
