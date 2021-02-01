@@ -50,8 +50,8 @@ export default class extends AbstractView {
         else
         {
             const json = await response.json();
-            var user = {"id":json.ID, "name":json.Name};
-
+            var user = {"id":json.ID, "name":json.Name, "mydocs": json.MyDocs};
+          
             localStorage.user=JSON.stringify(user);
             localStorage.logged=1;
 
