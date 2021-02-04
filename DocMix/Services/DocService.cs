@@ -31,6 +31,11 @@ namespace DocMix.Services
 
         public Doc Create(Doc doc)
         {
+            Page pag = new Page();
+            doc.Pages = new List<Page>();
+            doc.Pages.Add(pag);
+            doc.PageNum = 1;
+
             _docs.InsertOne(doc);
          
             MyDoc mydoc = new MyDoc();
@@ -53,5 +58,14 @@ namespace DocMix.Services
 
         public void Remove(string id) =>
             _docs.DeleteOne(d => d.ID == id);
+
+        public void UpdatePage(string id, int num, Page newpage)
+        {
+            //var filter = Builders<BsonDocument>.Filter.Eq("_id", id) &
+            //    Builders<BsonDocument>.Filter.Eq("Docs.Pages.Number", newpage.Number);
+
+            var update = Builders<Doc>.Update.Set(x => x.Pages[num], newpage);
+            _docs.UpdateOne(x=>x.ID==id, update);
+        }
     }
 }

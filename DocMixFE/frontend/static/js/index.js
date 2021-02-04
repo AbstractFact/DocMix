@@ -111,6 +111,25 @@ document.addEventListener("DOMContentLoaded", () => {
             e.preventDefault();
             handleDeleteDoc();
         }
+
+        if (e.target.matches("[addparBtn]")) {
+            e.preventDefault();
+            view.addElement("par");
+        }
+        if (e.target.matches("[addpicBtn]")) {
+            e.preventDefault();
+            view.addElement("pic");
+        }
+
+        if (e.target.matches("[savepageBtn]")) {
+            e.preventDefault();
+            handleSavePage();
+        }
+        if (e.target.matches("[addpageBtn]")) {
+            e.preventDefault();
+            handleSavePage();
+            handleAddPage();
+        }
     });
 
     router();
@@ -163,5 +182,16 @@ async function handleDeleteDoc()
     navigateTo("/docs");
 }
 
+async function handleSavePage()
+{
+    await view.SavePage();
+    //location.reload();
+}
 
-//Sacuvati u localStorage.user i listu dokumenata, i promeniti u Doc servisu funkciju Create (da radi Push)
+async function handleAddPage()
+{
+    await view.AddPage();
+    //location.reload();
+
+    //navigate to new page
+}

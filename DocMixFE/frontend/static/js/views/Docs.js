@@ -22,7 +22,7 @@ export default class extends AbstractView {
                 <th scope="col">Name</th>
                 <th scope="col">Category</th>
                 <th scope="col">Author</th>
-                <th scope="col">Pages</th>
+                <th scope="col">Page Num</th>
                 </tr>
             </thead>
             <tbody>`;
@@ -31,14 +31,14 @@ export default class extends AbstractView {
         .then(p => p.json().then(data => {
 
             data.forEach(d => {
-                const doc = new Doc(d["ID"], d["Name"], d["Category"], d["Author"]["Name"], d["Pages"]);
+                const doc = new Doc(d["ID"], d["Name"], d["Category"], d["Author"]["Name"], d["PageNum"]);
                 html+=`
                     <tr>
                     <th scope="row">${++i}</th>
                     <td><a href="/docs/${doc.id}" data-link>${doc.name}</a></td>
                     <td>${doc.category}</td>
                     <td>${doc.author}</td>
-                    <td>${doc.pages}</td>
+                    <td>${doc.pagenum}</td>
                     </tr>`;
             });
         }));
@@ -85,7 +85,7 @@ export default class extends AbstractView {
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({ "name": name, "category": category, "author": JSON.parse(localStorage.user), "pages": 0})
+            body: JSON.stringify({ "name": name, "category": category, "author": JSON.parse(localStorage.user), "pagenum": 0, "pages": []})
         });
 
         if (response.ok) {

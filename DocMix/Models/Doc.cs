@@ -27,8 +27,12 @@ namespace DocMix.Models
         [JsonProperty("Author")]
         public Author Author { get; set; }
 
+        [BsonElement("PageNum")]
+        [JsonProperty("PageNum")]
+        public int PageNum { get; set; }
+
         [BsonElement("Pages")]
         [JsonProperty("Pages")]
-        public int Pages { get; set; }
+        public List<Page> Pages { get; set; }
     }
 }

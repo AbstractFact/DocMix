@@ -73,5 +73,20 @@ namespace DocMix.Controllers
 
             return NoContent();
         }
+
+        [HttpPut("UpdatePage/{id:length(24)}/{num}")]
+        public IActionResult UpdatePage([FromBody] Page newpage, string id, int num)
+        {
+            var doc = _docsService.Get(id);
+
+            if (doc == null)
+            {
+                return NotFound();
+            }
+
+            _docsService.UpdatePage(id, num, newpage);
+
+            return NoContent();
+        }
     }
 }
