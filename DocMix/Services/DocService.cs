@@ -12,6 +12,7 @@ namespace DocMix.Services
     public class DocService
     {
         private readonly IMongoCollection<Doc> _docs;
+        private readonly IMongoCollection<Page> _pages;
         private readonly IMongoCollection<User> _users;
 
         public DocService(IDocMixDatabaseSettings settings)
@@ -20,6 +21,7 @@ namespace DocMix.Services
             var database = client.GetDatabase(settings.DatabaseName);
 
             _docs = database.GetCollection<Doc>("Docs");
+            _pages = database.GetCollection<Page>("Pages");
             _users = database.GetCollection<User>("Users");
         }
 
@@ -31,13 +33,12 @@ namespace DocMix.Services
 
         public Doc Create(Doc doc)
         {
-            Page pag = new Page();
-            doc.Pages = new List<Page>();
-            doc.Pages.Add(pag);
-            doc.PageNum = 1;
-
             _docs.InsertOne(doc);
-         
+
+            Page pag = new Page();
+            pag.DocumentID = doc.ID;
+            _pages.InsertOne(pag);
+
             MyDoc mydoc = new MyDoc();
             mydoc.ID = doc.ID;
             mydoc.Name = doc.Name;
@@ -58,14 +59,5 @@ namespace DocMix.Services
 
         public void Remove(string id) =>
             _docs.DeleteOne(d => d.ID == id);
-
-        public void UpdatePage(string id, int num, Page newpage)
-        {
-            //var filter = Builders<BsonDocument>.Filter.Eq("_id", id) &
-            //    Builders<BsonDocument>.Filter.Eq("Docs.Pages.Number", newpage.Number);
-
-            var update = Builders<Doc>.Update.Set(x => x.Pages[num], newpage);
-            _docs.UpdateOne(x=>x.ID==id, update);
-        }
     }
 }

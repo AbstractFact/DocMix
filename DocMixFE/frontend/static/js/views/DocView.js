@@ -12,6 +12,8 @@ export default class extends AbstractView {
         this.currPage=0;
         this.currDoc=null;
         this.creator=false;
+        this.pages = new Array();
+        this.elid=0;
     }
 
     async getHtml() 
@@ -20,8 +22,11 @@ export default class extends AbstractView {
         
         await fetch("https://localhost:44397/api/Doc/"+this.postId, {method: "GET"})
         .then(p => p.json().then(d => {
-            const doc = new Doc(d["ID"], d["Name"], d["Category"], d["Author"], d["PageNum"], d["Pages"]);
+            const doc = new Doc(d["d"]["ID"], d["d"]["Name"], d["d"]["Category"], d["d"]["Author"], d["d"]["PageNum"]);
+            this.pages=d["p"];
+
             this.currDoc=doc;
+            this.elid=this.pages[this.currPage].Elements.length;
 
             if(localStorage.user!=0 && this.currDoc.author.ID==JSON.parse(localStorage.user).id)
                 this.creator=true;
@@ -55,9 +60,6 @@ export default class extends AbstractView {
 
                 if(!this.creator)
                 {
-                    //this.currDoc.content.forEach(element => {
-                        
-                    //});
                     html+=`
                         <p>
                             Ovde ide sadrzaj dokumenta
@@ -144,14 +146,14 @@ export default class extends AbstractView {
         if(type=="par")
         {
             const tarea = document.createElement("textarea");
-            tarea.id=++this.currDoc.pages[this.currPage].ParagraphsNum;
+            tarea.id=++this.elid;
             form.appendChild(tarea);
         }
         else if(type=="pic")
         {
             const pic = document.createElement("input");
             pic.type="file";
-            pic.id=++this.currDoc.pages[this.currPage].PicturesNum+1;
+            pic.id=++this.elid;
             form.appendChild(pic);
         }
     }
@@ -160,9 +162,8 @@ export default class extends AbstractView {
     {
         const form = document.querySelector("#content");
         var elems= new Array();
-        let i=0,j=0;
 
-        for(let z=0; z<form.children.length;z++)
+        for(let z=0; z<form.children.length; z++)
         {
             const child=form.children[z];
             const id= parseInt(child.id);
@@ -172,23 +173,24 @@ export default class extends AbstractView {
             {
                 const text = new Paragraph(id, tmp);
                 elems.push(text);
-                i++;
             }
             else if(child.nodeName=="INPUT")
             {
                 const img = new Picture(id, tmp);
                 elems.push(img);
-                j++;
             }
         };
-        
-        let page = new Page(this.currPage, i ,j, elems);
 
-        await fetch("https://localhost:44397/api/Doc/UpdatePage/"+this.postId+"/"+this.currPage, { method: "PUT",
+        await fetch("https://localhost:44397/api/Page/Update/"+this.pages[this.currPage].ID, { method: "PUT",
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify(page)
+            body: JSON.stringify({"id":this.pages[this.currPage].ID, "documentid":this.currDoc.id, "elements": elems})
         });
+    }
+
+    AddPage()
+    {
+        //TODO
     }
 }

@@ -85,7 +85,7 @@ export default class extends AbstractView {
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({ "name": name, "category": category, "author": JSON.parse(localStorage.user), "pagenum": 0, "pages": []})
+            body: JSON.stringify({ "name": name, "category": category, "author": JSON.parse(localStorage.user), "pagenum": 1})
         });
 
         if (response.ok) {

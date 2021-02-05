@@ -30,9 +30,5 @@ namespace DocMix.Models
         [BsonElement("PageNum")]
         [JsonProperty("PageNum")]
         public int PageNum { get; set; }
-
-        [BsonElement("Pages")]
-        [JsonProperty("Pages")]
-        public List<Page> Pages { get; set; }
     }
 }

@@ -13,10 +13,12 @@ namespace DocMix.Controllers
     public class DocController : ControllerBase
     {
         private readonly DocService _docsService;
+        private readonly PageService _pagesService;
 
-        public DocController(DocService docsService)
+        public DocController(DocService docsService, PageService pagesService)
         {
             _docsService = docsService;
+            _pagesService = pagesService;
         }
 
         [HttpGet]
@@ -24,16 +26,17 @@ namespace DocMix.Controllers
             _docsService.Get();
 
         [HttpGet("{id:length(24)}", Name = "GetDoc")]
-        public ActionResult<Doc> Get(string id)
+        public ActionResult<object> Get(string id)
         {
             var doc = _docsService.Get(id);
+            var pages = _pagesService.GetPages(id);
 
             if (doc == null)
             {
                 return NotFound();
             }
 
-            return doc;
+            return new {d=doc, p=pages};
         }
 
         [HttpPost]
@@ -70,21 +73,6 @@ namespace DocMix.Controllers
             }
 
             _docsService.Remove(doc.ID);
-
-            return NoContent();
-        }
-
-        [HttpPut("UpdatePage/{id:length(24)}/{num}")]
-        public IActionResult UpdatePage([FromBody] Page newpage, string id, int num)
-        {
-            var doc = _docsService.Get(id);
-
-            if (doc == null)
-            {
-                return NotFound();
-            }
-
-            _docsService.UpdatePage(id, num, newpage);
 
             return NoContent();
         }

@@ -9,9 +9,15 @@ namespace DocMix.Models
 {
     public class Page
     {
-        public int Number { get; set; }
-        public int ParagraphsNum { get; set; }
-        public int PicturesNum { get; set; }
+        [BsonId]
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string ID { get; set; }
+        public string DocumentID { get; set; }
         public List<Element> Elements { get; set; }
+
+        public Page()
+        {
+            Elements = new List<Element>();
+        }
     }
 }
