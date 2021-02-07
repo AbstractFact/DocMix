@@ -22,7 +22,7 @@ namespace DocMix.Services
         }
 
         public List<Page> Get() =>
-            _pages.Find(d => true).ToList();
+            _pages.Find(d => true).SortBy(d => d.Position).ToList();
 
         public Page Get(string id) =>
             _pages.Find(d => d.ID == id).FirstOrDefault();

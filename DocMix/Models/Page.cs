@@ -14,6 +14,7 @@ namespace DocMix.Models
         public string ID { get; set; }
         public string DocumentID { get; set; }
         public List<Element> Elements { get; set; }
+        public double Position { get; set; }
 
         public Page()
         {

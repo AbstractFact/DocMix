@@ -8,8 +8,9 @@ export default class extends AbstractView {
     constructor(params) {
         super(params);
         this.postId = params.id;
+        this.currPage=params.pn-1;
         this.setTitle("Viewing Doc");
-        this.currPage=0;
+        //this.currPage=0;
         this.currDoc=null;
         this.creator=false;
         this.pages = new Array();
@@ -18,7 +19,7 @@ export default class extends AbstractView {
 
     async getHtml() 
     {
-        var html,i;
+        var html;
         
         await fetch("https://localhost:44397/api/Doc/"+this.postId, {method: "GET"})
         .then(p => p.json().then(d => {
@@ -60,24 +61,66 @@ export default class extends AbstractView {
 
                 if(!this.creator)
                 {
-                    html+=`
-                        <p>
-                            Ovde ide sadrzaj dokumenta
-                        </p>    
+                    this.pages[this.currPage].Elements.forEach(element => {
+                        console.log(element);
+                        if(element.Text==null)
+                        {
+                            html+=`<img src="${element.Link}" alt="Error loading picture"><br/>`;
+                        }
+                        else
+                        {
+                            html+=`<p>${element.Text}</p><br/>`;
+                        }
+                    });
+
+                    html+=`  
                         <br/>
                         </form>`;
                 }
                 else
+                {
+                    html+=`<div id="container" style="display:inline-block; width:100%;">
+                    <div id="view" style="display:block; width:50%; float:right;">`;
+
+                    this.pages[this.currPage].Elements.forEach(element => {
+                        if(element.Text==null)
+                        {
+                            html+=`<img src="${element.Link}" alt="Error loading picture"><br/>`;
+                        }
+                        else
+                        {
+                            html+=`<p>${element.Text}</p><br/>`;
+                        }
+                    });
+
                     html+=`
-                    <div id="content" style="display:block;"></div>
+                    </div>
+                    <div id="content" style="display:block; width:50%; float:left;">`;
+
+                    this.pages[this.currPage].Elements.forEach(element => {
+                        if(element.Text==null)
+                        {
+                            html+=`<input type="file" id="${element.ID}" value="${element.Link}" style="width:100%"><br/>`;
+                        }
+                        else
+                        {
+                            html+=`<textarea id="${element.ID}" style="width:100%">${element.Text}</textarea><br/>`;
+                        }
+                    });
+
+                    html+=`
+                    </div>
+                    </div>
+                    <div id="buttons" style="display:block; width:100%;">
                     <button type="submit" class="btn btn-primary" style="width:20%" addparBtn>Add paragraph</button>
                     <button type="submit" class="btn btn-primary" style="width:20%" addpicBtn>Add picture</button>
                     <button type="submit" class="btn btn-success" style="width:20%; float:right;" savepageBtn>Save page</button>
                     <button type="submit" class="btn btn-primary" style="width:20%; float:right;" addpageBtn>Add page</button>
+                    </div>
                     </form>
 
                     <div style="display:block">
-                    <form id="editDoc-form" style="width:50%; float:left;">
+                    <form id="editDoc-form" style="width:100%; float:left;">
                     <div class="form-group col-md-8">
                         <div class="form-group col-md-8">
                         <label for="inputTitle">Name</label>
@@ -97,7 +140,8 @@ export default class extends AbstractView {
                     </div>
                     <button type="submit" class="btn btn-primary" style="width:20%" editDocBtn>Edit Doc</button>
                     <button type="submit" class="btn btn-danger" style="width:30%; float:right" deleteDocBtn>Delete Doc</button>
-                    </form></div>`;    
+                    </form></div>`;  
+                }  
         }));
 
         return html;
@@ -128,15 +172,20 @@ export default class extends AbstractView {
         const response1 =  await fetch("https://localhost:44397/api/Doc/"+this.postId, { method: "DELETE"});
 
         const response2 =  await fetch("https://localhost:44397/api/User/DeleteDoc", { method: "DELETE",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify([ this.currDoc.author.ID, this.postId ])
-     });
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify([ this.currDoc.author.ID, this.postId ])
+        });
 
         if (response1.ok && response2.ok) {
             alert("Doc deleted!");
         }
+    }
+    
+    ToPage(pagenum)
+    {
+        window.location.href="/docs/"+this.currDoc.id+"/"+pagenum;
     }
 
     addElement(type)
@@ -147,6 +196,7 @@ export default class extends AbstractView {
         {
             const tarea = document.createElement("textarea");
             tarea.id=++this.elid;
+            tarea.style.width="100%";
             form.appendChild(tarea);
         }
         else if(type=="pic")
@@ -154,6 +204,7 @@ export default class extends AbstractView {
             const pic = document.createElement("input");
             pic.type="file";
             pic.id=++this.elid;
+            pic.style.width="100%";
             form.appendChild(pic);
         }
     }
@@ -168,6 +219,8 @@ export default class extends AbstractView {
             const child=form.children[z];
             const id= parseInt(child.id);
             const tmp = child.value;
+
+            console.log(child.name);
 
             if(child.nodeName=="TEXTAREA")
             {
@@ -185,12 +238,36 @@ export default class extends AbstractView {
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({"id":this.pages[this.currPage].ID, "documentid":this.currDoc.id, "elements": elems})
-        });
+            body: JSON.stringify({"id":this.pages[this.currPage].ID, "documentid":this.currDoc.id, "position":this.pages[this.currPage].Position, "elements": elems})
+        }).then(res=>{if (res.ok) this.ToPage(this.currPage+1);});
     }
 
     AddPage()
     {
-        //TODO
+        this.SavePage();
+
+        let pos;
+        if(!this.pages[this.currPage+1])
+            pos = Math.trunc(this.pages[this.currPage].Position)+1;
+        else
+            pos=(this.pages[this.currPage].Position+this.pages[this.currPage+1].Position)/2.0;
+
+        fetch("https://localhost:44397/api/Page", { method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({"documentid":this.currDoc.id, "position":pos})
+        }).then(response=>{
+            if(response.ok)
+            {
+                response.json().then(data=>
+                {
+                    this.pages.splice(this.currPage+1, 0, data);
+                    this.currPage++;
+                    console.log(this.pages);
+                    this.ToPage(this.currPage+1);
+                })
+            }
+        });
     }
 }

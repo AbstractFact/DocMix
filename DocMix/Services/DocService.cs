@@ -37,6 +37,7 @@ namespace DocMix.Services
 
             Page pag = new Page();
             pag.DocumentID = doc.ID;
+            pag.Position = 1.0;
             _pages.InsertOne(pag);
 
             MyDoc mydoc = new MyDoc();
@@ -59,5 +60,14 @@ namespace DocMix.Services
 
         public void Remove(string id) =>
             _docs.DeleteOne(d => d.ID == id);
+
+        public void UpdatePagenum(string id, int num)
+        {
+           // var filter = Builders<Doc>.Filter.Eq("_id", id);
+
+            var update = Builders<Doc>.Update.Inc("PageNum", num);
+
+            var result = _docs.UpdateOne(d=>d.ID==id, update);
+        }
     }
 }

@@ -37,7 +37,7 @@ export default class extends AbstractView {
                     html+=`
                         <tr id="${doc.id}">
                         <th scope="row">${++i}</th>
-                        <td><a href="/docs/${doc.id}" data-link>${doc.name}</a></td>
+                        <td><a href="/docs/${doc.id}/1" data-link>${doc.name}</a></td>
                         <td>${doc.category}</td>
                         </tr>`;
                 });

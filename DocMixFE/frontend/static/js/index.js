@@ -44,7 +44,7 @@ const router = async () => {
     const routes = [
         { path: "/", view: Home },
         { path: "/docs", view: Docs },
-        { path: "/docs/:id", view: DocView },
+        { path: "/docs/:id/:pn", view: DocView },
         { path: "/mydocs", view: MyDocs },
         { path: "/login", view: Login },
         { path: "/signup", view: Signup }
@@ -192,6 +192,4 @@ async function handleAddPage()
 {
     await view.AddPage();
     //location.reload();
-
-    //navigate to new page
 }

@@ -59,5 +59,26 @@ namespace DocMix.Services
 
             return true;
         }
+
+        public void Update(Doc doc)
+        {
+            MyDoc mdoc = new MyDoc();
+            mdoc.ID = doc.ID;
+            mdoc.Category = doc.Category;
+            mdoc.Name = doc.Name;
+
+            var filter = Builders<User>.Filter.Eq(x => x.ID, doc.Author.ID) &
+                Builders<User>.Filter.ElemMatch(doc => doc.MyDocs, el => el.ID == doc.ID);
+
+            var update = Builders<User>.Update.Set(doc => doc.MyDocs[-1], mdoc);
+
+            //Col.UpdateOne(filter, update);
+
+            //var update = Builders<User>.Update.Set(u => u.MyDocs, Builders<MyDoc>.Filter.Where(d => d.ID == doc))
+            //var update = Builders<User>.Update("PageNum", num);
+
+            _users.UpdateOne(filter, update);
+        }
     }
 }
+

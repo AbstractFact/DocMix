@@ -12,11 +12,13 @@ namespace DocMix.Controllers
     [ApiController]
     public class DocController : ControllerBase
     {
+        private readonly UserService _usersService;
         private readonly DocService _docsService;
         private readonly PageService _pagesService;
 
-        public DocController(DocService docsService, PageService pagesService)
+        public DocController(UserService usersService, DocService docsService, PageService pagesService)
         {
+            _usersService = usersService;
             _docsService = docsService;
             _pagesService = pagesService;
         }
@@ -58,6 +60,7 @@ namespace DocMix.Controllers
             }
 
             _docsService.Update(id, newdoc);
+            _usersService.Update(newdoc);
 
             return NoContent();
         }

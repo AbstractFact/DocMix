@@ -12,11 +12,13 @@ namespace DocMix.Controllers
     [ApiController]
     public class PageController : ControllerBase
     {
+        private readonly DocService _docsService;
         private readonly PageService _pagesService;
 
-        public PageController(PageService pagesService)
+        public PageController(PageService pagesService, DocService docsService)
         {
             _pagesService = pagesService;
+            _docsService = docsService;
         }
 
         [HttpGet]
@@ -40,6 +42,7 @@ namespace DocMix.Controllers
         public ActionResult<Page> Create(Page pag)
         {
             _pagesService.Create(pag);
+            _docsService.UpdatePagenum(pag.DocumentID, 1);
 
             return CreatedAtRoute("GetPage", new { id = pag.ID.ToString() }, pag);
         }
@@ -69,6 +72,7 @@ namespace DocMix.Controllers
                 return NotFound();
             }
 
+            _docsService.UpdatePagenum(doc.DocumentID, -1);
             _pagesService.Remove(doc.ID);
 
             return NoContent();
