@@ -112,10 +112,13 @@ export default class extends AbstractView {
                     </div>
                     </div>
                     <div id="buttons" style="display:block; width:100%;">
-                    <button type="submit" class="btn btn-primary" style="width:20%" addparBtn>Add paragraph</button>
-                    <button type="submit" class="btn btn-primary" style="width:20%" addpicBtn>Add picture</button>
-                    <button type="submit" class="btn btn-success" style="width:20%; float:right;" savepageBtn>Save page</button>
-                    <button type="submit" class="btn btn-primary" style="width:20%; float:right;" addpageBtn>Add page</button>
+                    <button type="submit" class="btn btn-primary" style="width:15%" addparBtn>Add paragraph</button>
+                    <button type="submit" class="btn btn-primary" style="width:10%" addpicBtn>Add picture</button>
+                    <button type="submit" class="btn btn-primary" style="width:5%" prevpageBtn><-</button>
+                    <input type="number" id="pgnum" value="${this.currPage}" min="1" max="${doc.pagenum}>
+                    <button type="submit" class="btn btn-primary" style="width:5%" nextpageBtn>-></button>
+                    <button type="submit" class="btn btn-success" style="width:10%; float:right;" savepageBtn>Save page</button>
+                    <button type="submit" class="btn btn-primary" style="width:10%; float:right;" addpageBtn>Add page</button>
                     </div>
                     </form>
 
