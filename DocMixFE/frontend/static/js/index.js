@@ -75,6 +75,15 @@ const router = async () => {
 window.addEventListener("popstate", router);
 
 document.addEventListener("DOMContentLoaded", () => {
+    document.body.addEventListener("keypress", e => {
+        if(e.key==='Enter')
+        {
+            if (e.target.matches("[gotopage]")) {
+                e.preventDefault();
+                view.ToPage(e.target.value);
+            }
+        }
+    }),
     document.body.addEventListener("click", e => {
         if (e.target.matches("[data-link]")) {
             e.preventDefault();
@@ -121,6 +130,11 @@ document.addEventListener("DOMContentLoaded", () => {
             view.addElement("pic");
         }
 
+        if (e.target.matches("[changepageBtn]")) {
+            e.preventDefault();
+            view.ToPage(e.target.id);
+        }
+
         if (e.target.matches("[savepageBtn]")) {
             e.preventDefault();
             handleSavePage();
@@ -129,6 +143,10 @@ document.addEventListener("DOMContentLoaded", () => {
             e.preventDefault();
             handleSavePage();
             handleAddPage();
+        }
+        if (e.target.matches("[delpageBtn]")) {
+            e.preventDefault();
+            handleDeletePage();
         }
     });
 
@@ -185,11 +203,14 @@ async function handleDeleteDoc()
 async function handleSavePage()
 {
     await view.SavePage();
-    //location.reload();
 }
 
 async function handleAddPage()
 {
     await view.AddPage();
-    //location.reload();
+}
+
+async function handleDeletePage()
+{
+    await view.DeletePage();
 }

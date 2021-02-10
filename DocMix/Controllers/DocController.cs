@@ -62,7 +62,7 @@ namespace DocMix.Controllers
             _docsService.Update(id, newdoc);
             _usersService.Update(newdoc);
 
-            return NoContent();
+            return Ok();
         }
 
         [HttpDelete("{id:length(24)}")]
@@ -75,9 +75,10 @@ namespace DocMix.Controllers
                 return NotFound();
             }
 
-            _docsService.Remove(doc.ID);
+            _docsService.Remove(id);
+            _pagesService.RemoveDocPages(id);
 
-            return NoContent();
+            return Ok();
         }
     }
 }

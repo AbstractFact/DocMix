@@ -75,7 +75,7 @@ namespace DocMix.Controllers
             _docsService.UpdatePagenum(doc.DocumentID, -1);
             _pagesService.Remove(doc.ID);
 
-            return NoContent();
+            return Ok();
         }
     }
 }

@@ -43,6 +43,9 @@ namespace DocMix.Services
         public void Remove(string id) =>
             _pages.DeleteOne(d => d.ID == id);
 
+        public void RemoveDocPages(string docid) =>
+            _pages.DeleteMany(d => d.DocumentID == docid);
+
 
         public List<Page> GetPages(string docid)=>
             _pages.Find(p => p.DocumentID == docid).ToList();

@@ -17,6 +17,7 @@ export default class extends AbstractView {
         this.elid=0;
     }
 
+
     async getHtml() 
     {
         var html;
@@ -45,37 +46,66 @@ export default class extends AbstractView {
                         <th scope="col">Page Num</th>
                         </tr>
                     </thead>
-                    <tbody>`;
-
-                html+=`
+                    <tbody>
                     <tr>
                     <td>${doc.category}</td>
                     <td>${doc.author.Name}</td>
                     <td>${doc.pagenum}</td>          
-                    </tr>`;
+                    </tr></tbody>
+                    </table>`;     
 
-                html+=`
-                    </tbody>
-                    </table>
+                if(this.creator)
+                {
+                    html+=`<div style="display:block">
+                    <form id="editDoc-form" style="width:100%; float:left;">
+                    <div class="form-group col-md-8">
+                        <div class="form-group col-md-8">
+                        <label for="inputTitle">Name</label>
+                        <input type="text" class="form-control" id="inputName" value="${doc.name}">
+                        </div>
+                        <label for="inputCategory">Category</label>
+                        <select id="inputCategory" class="form-control" style="width:30%;">
+                            <option selected>${doc.category}</option>
+                            <option>Note</option>
+                            <option>List</option>
+                            <option>Novel</option>
+                            <option>Picturary</option>
+                            <option>Document</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width:20%" editDocBtn>Edit Doc</button>
+                    <button type="submit" class="btn btn-danger" style="width:20%;" deleteDocBtn>Delete Doc</button>
+                    </form></div>
                     <form id="viewDoc-form" style="width:100%; float:left;">`;
+                }
 
                 if(!this.creator)
                 {
+                    html+=`<form id="viewDoc-form" style="width:100%;">
+                    <div style="display:flex; width:100%; flex-direction:column; align-items: center;">`;
+
                     this.pages[this.currPage].Elements.forEach(element => {
-                        console.log(element);
                         if(element.Text==null)
                         {
-                            html+=`<img src="${element.Link}" alt="Error loading picture"><br/>`;
+                            html+=`<img src="${element.Link}" align=centre alt="Error loading picture"><br/>`;
                         }
                         else
                         {
-                            html+=`<p>${element.Text}</p><br/>`;
+                            html+=`<p align=centre>${element.Text}</p><br/>`;
                         }
                     });
 
-                    html+=`  
-                        <br/>
-                        </form>`;
+                    html+=`
+                    </div>
+                    <div id="buttons" style="display:block; width:100%;"> 
+                        <div style="display: flex; justify-content: center;">
+                        <button type="submit" class="btn btn-primary" style="width:10%;" id="${this.currPage}" changepageBtn><-</button>
+                        <input type="number" id="pgnum" value="${this.currPage+1}" min="1" max="${doc.pagenum}" style="margin:15px;" gotopage>
+                        <button type="submit" class="btn btn-primary" style="width:10%;" id="${this.currPage+2}" changepageBtn>-></button>
+                        </div>
+                    </div>
+                    <br/>
+                    </form>`;
                 }
                 else
                 {
@@ -112,38 +142,19 @@ export default class extends AbstractView {
                     </div>
                     </div>
                     <div id="buttons" style="display:block; width:100%;">
-                    <button type="submit" class="btn btn-primary" style="width:15%" addparBtn>Add paragraph</button>
-                    <button type="submit" class="btn btn-primary" style="width:10%" addpicBtn>Add picture</button>
-                    <button type="submit" class="btn btn-primary" style="width:5%" prevpageBtn><-</button>
-                    <input type="number" id="pgnum" value="${this.currPage}" min="1" max="${doc.pagenum}>
-                    <button type="submit" class="btn btn-primary" style="width:5%" nextpageBtn>-></button>
-                    <button type="submit" class="btn btn-success" style="width:10%; float:right;" savepageBtn>Save page</button>
-                    <button type="submit" class="btn btn-primary" style="width:10%; float:right;" addpageBtn>Add page</button>
-                    </div>
-                    </form>
-
-                    <div style="display:block">
-                    <form id="editDoc-form" style="width:100%; float:left;">
-                    <div class="form-group col-md-8">
-                        <div class="form-group col-md-8">
-                        <label for="inputTitle">Name</label>
-                        <input type="text" class="form-control" id="inputName" value="${doc.name}">
+                        <button type="submit" class="btn btn-primary" style="width:15%" addparBtn>Add paragraph</button>
+                        <button type="submit" class="btn btn-primary" style="width:10%" addpicBtn>Add picture</button>
+                        <button type="submit" class="btn btn-success" style="width:10%; float:right;" savepageBtn>Save page</button>
+                        <button type="submit" class="btn btn-primary" style="width:10%; float:right;" addpageBtn>Add page</button>`;
+                        if(this.currDoc.pagenum>1) 
+                            html+=`<button type="submit" class="btn btn-danger" style="width:10%; float:right;" delpageBtn>Delete page</button>`;
+                        html+=`<div style="display: flex; justify-content: center;">
+                            <button type="submit" class="btn btn-primary" style="width:10%;" id="${this.currPage}" changepageBtn><-</button>
+                            <input type="number" id="pgnum" value="${this.currPage+1}" min="1" max="${doc.pagenum}" style="margin:15px;" gotopage>
+                            <button type="submit" class="btn btn-primary" style="width:10%;" id="${this.currPage+2}" changepageBtn>-></button>
                         </div>
                     </div>
-                    <div class="form-group col-md-4">
-                        <label for="inputCategory">Category</label>
-                        <select id="inputCategory" class="form-control">
-                            <option selected>${doc.category}</option>
-                            <option>Note</option>
-                            <option>List</option>
-                            <option>Novel</option>
-                            <option>Picturary</option>
-                            <option>Document</option>
-                        </select>
-                    </div>
-                    <button type="submit" class="btn btn-primary" style="width:20%" editDocBtn>Edit Doc</button>
-                    <button type="submit" class="btn btn-danger" style="width:30%; float:right" deleteDocBtn>Delete Doc</button>
-                    </form></div>`;  
+                    </form>`;  
                 }  
         }));
 
@@ -188,7 +199,10 @@ export default class extends AbstractView {
     
     ToPage(pagenum)
     {
-        window.location.href="/docs/"+this.currDoc.id+"/"+pagenum;
+        if(pagenum>0 && pagenum<=this.currDoc.pagenum)
+            window.location.href="/docs/"+this.currDoc.id+"/"+pagenum;
+        else
+            alert("Chosen page number is out of bounds of this document")
     }
 
     addElement(type)
@@ -267,10 +281,24 @@ export default class extends AbstractView {
                 {
                     this.pages.splice(this.currPage+1, 0, data);
                     this.currPage++;
-                    console.log(this.pages);
+                    this.currDoc.pagenum++;
                     this.ToPage(this.currPage+1);
                 })
             }
+        });
+    }
+
+    async DeletePage()
+    {
+        fetch("https://localhost:44397/api/Page/"+this.pages[this.currPage].ID, { method: "DELETE" }).then(response=>{
+            if(response.ok)
+            {
+                this.pages.splice(this.currPage, 1);
+                if(this.currPage!=0)
+                    this.ToPage(this.currPage);
+                else
+                    this.ToPage(this.currPage+1);
+            }   
         });
     }
 }
