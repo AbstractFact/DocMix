@@ -26,7 +26,7 @@ namespace DocMix.Controllers
             _usersService.Get();
 
         [HttpGet("{id:length(24)}", Name = "GetUser")]
-        public ActionResult<User> Get(string id)
+        public ActionResult<UserDTO> Get(string id)
         {
             var user = _usersService.Get(id);
 
@@ -35,8 +35,32 @@ namespace DocMix.Controllers
                 return NotFound();
             }
 
-            return user;
+            return new UserDTO(user);
         }
+
+        [HttpPost("GetUsersFiltered")]
+        public ActionResult<List<UserDTO>> GetUsersFiltered([FromBody] UserFiltersDTO filters)
+        {
+            List<UserDTO> users = _usersService.GetUsersFiltered(filters);
+
+            if (users == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(users);
+        }
+
+        //[HttpPost("GetUserDocsFiltered/{id}")]
+        //public ActionResult<List<MyDoc>> GetUserDocsFiltered([FromBody] FiltersDTO filters, string id)
+        //{
+        //    List<MyDoc> res = _usersService.GetUserDocsFiltered(id, filters);
+
+        //    if (res != null)
+        //        return Ok(res);
+        //    else
+        //        return NotFound();
+        //}
 
         [HttpPost]
         public ActionResult<User> Create(User user)
@@ -99,7 +123,7 @@ namespace DocMix.Controllers
         }
 
         [HttpPost("GetUserDocsFiltered/{id}")]
-        public ActionResult<List<MyDoc>> GetUserDocsFiltered([FromBody] FiltersDTO filters, string id)
+        public ActionResult<List<MyDoc>> GetUserDocsFiltered([FromBody] DocFiltersDTO filters, string id)
         {
             List<MyDoc> res = _usersService.GetUserDocsFiltered(id, filters);
 

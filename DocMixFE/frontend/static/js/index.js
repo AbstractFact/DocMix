@@ -4,6 +4,7 @@ import DocView from "./views/DocView.js";
 import Login from "./views/Login.js";
 import Signup from "./views/Signup.js";
 import MyDocs from "./views/MyDocs.js";
+import Profile from "./views/Profile.js";
 
 var view;
 
@@ -46,6 +47,7 @@ const router = async () => {
         { path: "/docs", view: Docs },
         { path: "/docs/:id/:pn", view: DocView },
         { path: "/mydocs", view: MyDocs },
+        { path: "/profile/:id", view: Profile },
         { path: "/login", view: Login },
         { path: "/signup", view: Signup }
     ];
@@ -155,6 +157,11 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         if (e.target.matches("[filterMyDocBtn]")) {
+            e.preventDefault();
+            handleFilter();
+        }
+
+        if (e.target.matches("[filterAuthorsBtn]")) {
             e.preventDefault();
             handleFilter();
         }

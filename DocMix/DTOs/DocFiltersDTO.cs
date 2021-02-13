@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace DocMix.DTOs
 {
-    public class FiltersDTO
+    public class DocFiltersDTO
     {
         public string Name { get; set; }
         public string Category { get; set; }

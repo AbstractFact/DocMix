@@ -23,8 +23,33 @@ namespace DocMix.Services
         public List<User> Get() =>
             _users.Find(u => true).ToList();
 
-        public User Get(string id) =>
-            _users.Find<User>(u => u.ID == id).FirstOrDefault();
+        public User Get(string id)
+        {
+            User usr = _users.Find(u => u.ID == id).FirstOrDefault();
+            List<MyDoc> docs = usr.MyDocs;
+            usr.MyDocs = docs.Where(md => md.Public  == true).ToList();
+            return usr;
+        }
+
+        public List<UserDTO> GetUsersFiltered(UserFiltersDTO filters)
+        {
+            List<User> users = _users.Find(u => true).ToList();
+
+            if (filters.Name!="")
+                users = users.Where(u => u.Name == filters.Name).ToList();
+            if (filters.Country!="")
+                users = users.Where(u => u.Country == filters.Country).ToList();
+
+
+            List<UserDTO> userdtos = new List<UserDTO>();
+
+            foreach(User us in users)
+            {
+                userdtos.Add(new UserDTO(us));
+            }
+            
+            return userdtos;
+        }
 
         public User Create(User user)
         {
@@ -52,7 +77,7 @@ namespace DocMix.Services
             return user.MyDocs;
         }
 
-        public List<MyDoc> GetUserDocsFiltered(string id, FiltersDTO filters)
+        public List<MyDoc> GetUserDocsFiltered(string id, DocFiltersDTO filters)
         {
             User user = _users.Find<User>(u => u.ID == id).FirstOrDefault();
             List<MyDoc> mydocs = user.MyDocs;
