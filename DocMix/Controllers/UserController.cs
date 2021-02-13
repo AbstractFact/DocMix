@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using DocMix.Services;
 using DocMix.Models;
 using MongoDB.Driver;
+using DocMix.DTOs;
 
 namespace DocMix.Controllers
 {
@@ -90,6 +91,17 @@ namespace DocMix.Controllers
         public ActionResult<List<MyDoc>> GetUserDocs(string id)
         {
             List<MyDoc> res = _usersService.GetUserDocs(id);
+
+            if (res != null)
+                return Ok(res);
+            else
+                return NotFound();
+        }
+
+        [HttpPost("GetUserDocsFiltered/{id}")]
+        public ActionResult<List<MyDoc>> GetUserDocsFiltered([FromBody] FiltersDTO filters, string id)
+        {
+            List<MyDoc> res = _usersService.GetUserDocsFiltered(id, filters);
 
             if (res != null)
                 return Ok(res);

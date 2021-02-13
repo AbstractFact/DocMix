@@ -19,6 +19,10 @@ export default class extends AbstractView {
                     <input type="text" placeholder="Enter Name" name="name" id="login-name" required>
                 </div>
                 <div class="inputitem">
+                    <label for="country"><b>Country</b></label>
+                    <input type="text" placeholder="Enter Country Name" name="country" id="login-country" required>
+                </div>
+                <div class="inputitem">
                     <label for="uname"><b>Username</b></label>
                     <input type="text" placeholder="Enter Username" name="uname" id="login-username" required>
                 </div>
@@ -28,25 +32,25 @@ export default class extends AbstractView {
                 </div>
                 <button class="inputitem" type="submit" signupbtn>Signup</button>
             </div>
-        </form>    `;
+        </form>`;
         
         return html;
-
     }
 
     async signup()
     {
         const signupForm = document.querySelector('#signup-form');
         const name = signupForm['login-name'].value;
+        const country = signupForm['login-country'].value;
         const username = signupForm['login-username'].value;
         const password = signupForm['login-password'].value;  
 
         const response =  await fetch("https://localhost:44397/api/User", { method: "POST",
-                                    headers: {
-                                        "Content-Type": "application/json"
-                                    },
-                                    body: JSON.stringify({ "name": name, "username": username, "password": password })
-                                });
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ "name": name, "country": country, "username": username, "password": password })
+        });
 
         if (!response.ok)
         {

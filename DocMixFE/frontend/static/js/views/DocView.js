@@ -24,7 +24,7 @@ export default class extends AbstractView {
         
         await fetch("https://localhost:44397/api/Doc/"+this.postId, {method: "GET"})
         .then(p => p.json().then(d => {
-            const doc = new Doc(d["d"]["ID"], d["d"]["Name"], d["d"]["Category"], d["d"]["Author"], d["d"]["PageNum"]);
+            const doc = new Doc(d["d"]["ID"], d["d"]["Name"], d["d"]["Category"], d["d"]["Author"], d["d"]["PageNum"], d["d"]["Public"]);
             this.pages=d["p"];
 
             this.currDoc=doc;
@@ -38,6 +38,7 @@ export default class extends AbstractView {
             html=`
                 <h1>Doc: ${doc.name}</h1>
                 <br/>
+                <img src="https://drive.google.com/file/d/1ZzBjx_Opxe9WlielFCT80zeQOa-rYnj0/view?usp=sharing" alt="nece">
                 <table class="table table-striped">
                     <thead>
                         <tr>
@@ -72,6 +73,12 @@ export default class extends AbstractView {
                             <option>Picturary</option>
                             <option>Document</option>
                         </select>
+                        <br/>`;
+                        if(doc.public)
+                            html+=`<input type="checkbox" id="inputPublic" name="inputPublic" checked>`;
+                        else
+                            html+=`<input type="checkbox" id="inputPublic" name="inputPublic">`;
+                    html+=`<label for="inputPublic">Public</label>
                     </div>
                     <button type="submit" class="btn btn-primary" style="width:20%" editDocBtn>Edit Doc</button>
                     <button type="submit" class="btn btn-danger" style="width:20%;" deleteDocBtn>Delete Doc</button>
@@ -130,11 +137,15 @@ export default class extends AbstractView {
                     this.pages[this.currPage].Elements.forEach(element => {
                         if(element.Text==null)
                         {
-                            html+=`<input type="file" id="${element.ID}" value="${element.Link}" style="width:100%"><br/>`;
+                            html+=`<input type="file" id="${element.ID}" class="${element.ID}" value=${element.Link} style="width:90%">
+                            <button type="submit" class="${element.ID} btn btn-danger" style="width:7%" delelemBtn>x</button>
+                            <br/>`;
                         }
                         else
                         {
-                            html+=`<textarea id="${element.ID}" style="width:100%">${element.Text}</textarea><br/>`;
+                            html+=`<textarea id="${element.ID}" class="${element.ID}" style="width:90%">${element.Text}</textarea>
+                            <button type="submit" class="${element.ID} btn btn-danger" style="width:7%" delelemBtn>x</button>
+                            <br/>`;
                         }
                     });
 
@@ -166,13 +177,14 @@ export default class extends AbstractView {
         const editDocForm = document.querySelector('#editDoc-form');
         const name = editDocForm['inputName'].value;
         const category = editDocForm['inputCategory'].value;
+        const pub = editDocForm['inputPublic'].checked;
       
         const response =  await fetch("https://localhost:44397/api/Doc/"+this.postId, 
         { method: "PUT",
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({"ID": this.postId, "Name": name, "Category":category, "Author": this.currDoc.author, "PageNum": this.currDoc.pagenum})
+            body: JSON.stringify({"ID": this.postId, "Name": name, "Category":category, "Author": this.currDoc.author, "PageNum": this.currDoc.pagenum, "Public":pub})
         });
 
         if (response.ok) 
@@ -213,17 +225,46 @@ export default class extends AbstractView {
         {
             const tarea = document.createElement("textarea");
             tarea.id=++this.elid;
-            tarea.style.width="100%";
+            tarea.className=tarea.id;
+            tarea.style.width="90%";
             form.appendChild(tarea);
+
+            const delem = document.createElement("button");
+            delem.type="submit";
+            delem.className=tarea.id+" btn btn-danger";
+            delem.style.width="7%";
+            delem.setAttribute("delelembtn","");
+            delem.innerHTML="x";
+            form.appendChild(delem);
         }
         else if(type=="pic")
         {
             const pic = document.createElement("input");
             pic.type="file";
             pic.id=++this.elid;
-            pic.style.width="100%";
+            pic.className=pic.id;
+            pic.style.width="90%";
             form.appendChild(pic);
+
+            const delem = document.createElement("button");
+            delem.type="submit";
+            delem.className=pic.id+" btn btn-danger";
+            delem.style.width="7%";
+            delem.setAttribute("delelembtn","");
+            delem.innerHTML="x";
+            form.appendChild(delem);
         }
+    }
+
+    DeleteElement(clas)
+    {
+        const cls= clas.split(" ")[0];
+        const form = document.querySelector("#content");
+
+        const elems = form.getElementsByClassName(cls);
+
+        form.removeChild(elems[1]);
+        form.removeChild(elems[0]);
     }
 
     async SavePage()
@@ -236,8 +277,6 @@ export default class extends AbstractView {
             const child=form.children[z];
             const id= parseInt(child.id);
             const tmp = child.value;
-
-            console.log(child.name);
 
             if(child.nodeName=="TEXTAREA")
             {

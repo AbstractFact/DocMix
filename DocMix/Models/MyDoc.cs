@@ -16,5 +16,6 @@ namespace DocMix.Models
         public string Name { get; set; }
 
         public string Category { get; set; }
+        public bool Public { get; set; }
     }
 }

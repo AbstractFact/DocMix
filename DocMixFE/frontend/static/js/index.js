@@ -130,6 +130,11 @@ document.addEventListener("DOMContentLoaded", () => {
             view.addElement("pic");
         }
 
+        if (e.target.matches("[delelembtn]")) {
+            e.preventDefault();
+            view.DeleteElement(e.target.className);
+        }
+
         if (e.target.matches("[changepageBtn]")) {
             e.preventDefault();
             view.ToPage(e.target.id);
@@ -147,6 +152,11 @@ document.addEventListener("DOMContentLoaded", () => {
         if (e.target.matches("[delpageBtn]")) {
             e.preventDefault();
             handleDeletePage();
+        }
+
+        if (e.target.matches("[filterMyDocBtn]")) {
+            e.preventDefault();
+            handleFilter();
         }
     });
 
@@ -213,4 +223,9 @@ async function handleAddPage()
 async function handleDeletePage()
 {
     await view.DeletePage();
+}
+
+async function handleFilter()
+{
+    await view.Filter();
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using DocMix.Models;
 using MongoDB.Driver;
+using DocMix.DTOs;
 
 namespace DocMix.Services
 {
@@ -51,6 +52,21 @@ namespace DocMix.Services
             return user.MyDocs;
         }
 
+        public List<MyDoc> GetUserDocsFiltered(string id, FiltersDTO filters)
+        {
+            User user = _users.Find<User>(u => u.ID == id).FirstOrDefault();
+            List<MyDoc> mydocs = user.MyDocs;
+
+            if (filters.Name!="")
+                mydocs = mydocs.Where(md=>md.Name==filters.Name).ToList();
+            if (filters.Category!="0")
+                mydocs = mydocs.Where(md => md.Category == filters.Category).ToList();
+            if (filters.Access != "0")
+                mydocs = mydocs.Where(md => (md.Public? "Public":"Private") == filters.Access).ToList();
+
+            return mydocs;
+        }
+
         public bool DeleteDoc(string author, string doc)
         {
             var filter = Builders<User>.Filter.Where(u => u.ID == author);
@@ -66,6 +82,7 @@ namespace DocMix.Services
             mdoc.ID = doc.ID;
             mdoc.Category = doc.Category;
             mdoc.Name = doc.Name;
+            mdoc.Public = doc.Public;
 
             var filter = Builders<User>.Filter.Eq(x => x.ID, doc.Author.ID) &
                 Builders<User>.Filter.ElemMatch(doc => doc.MyDocs, el => el.ID == doc.ID);

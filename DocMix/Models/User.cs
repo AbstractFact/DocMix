@@ -17,6 +17,9 @@ namespace DocMix.Models
         [BsonElement("Name")]
         public string Name { get; set; }
 
+        [BsonElement("Country")]
+        public string Country { get; set; }
+
         [BsonElement("Username")]
         public string Username { get; set; }
 

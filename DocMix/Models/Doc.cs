@@ -30,5 +30,9 @@ namespace DocMix.Models
         [BsonElement("PageNum")]
         [JsonProperty("PageNum")]
         public int PageNum { get; set; }
+
+        [BsonElement("Public")]
+        [JsonProperty("Public")]
+        public bool Public { get; set; }
     }
 }

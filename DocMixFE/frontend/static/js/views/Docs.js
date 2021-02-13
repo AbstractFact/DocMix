@@ -5,7 +5,7 @@ export default class extends AbstractView {
     constructor(params) 
     {
         super(params);
-        this.setTitle("All Docs");
+        this.setTitle("Public Docs");
     }
 
     async getHtml() 
@@ -13,7 +13,7 @@ export default class extends AbstractView {
         var html,i=0;
 
         html=`
-        <h1>All Docs</h1>
+        <h1>Public Docs</h1>
         <br/>
         <table class="table table-striped">
             <thead>
@@ -69,6 +69,11 @@ export default class extends AbstractView {
                     <option>Document</option>
                 </select>
             </div>
+            <br/>
+            <div class="form-group col-md-6">
+                <input type="checkbox" id="inputPublic" name="inputPublic" checked>
+                <label for="inputPublic">Public</label>
+            </div>
             <button type="submit" class="btn btn-primary" style="width:20%" addDocBtn>Add Doc</button>
             </form>`;
 
@@ -80,12 +85,13 @@ export default class extends AbstractView {
         const addDocForm = document.querySelector('#adddoc-form');
         const name = addDocForm['inputName'].value;
         const category = addDocForm['inputCategory'].value;
+        const pub = addDocForm['inputPublic'].checked;
 
-        const response =  await  fetch("https://localhost:44397/api/Doc", { method: "POST",
+        const response =  await fetch("https://localhost:44397/api/Doc", { method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({ "name": name, "category": category, "author": JSON.parse(localStorage.user), "pagenum": 1})
+            body: JSON.stringify({ "name": name, "category": category, "author": JSON.parse(localStorage.user), "pagenum": 1, "public": pub})
         });
 
         if (response.ok) {
@@ -94,4 +100,3 @@ export default class extends AbstractView {
         }   
     }
 }
-

@@ -26,7 +26,7 @@ namespace DocMix.Services
         }
 
         public List<Doc> Get() =>
-            _docs.Find(d => true).ToList();
+            _docs.Find<Doc>(d => d.Public == true).ToList();
 
         public Doc Get(string id) =>
             _docs.Find<Doc>(d => d.ID == id).FirstOrDefault();
@@ -44,6 +44,7 @@ namespace DocMix.Services
             mydoc.ID = doc.ID;
             mydoc.Name = doc.Name;
             mydoc.Category = doc.Category;
+            mydoc.Public = doc.Public;
 
             var filter = Builders<User>.Filter.Where(u => u.ID == doc.Author.ID);
             var update = Builders<User>.Update.Push("MyDocs", mydoc);
@@ -63,8 +64,6 @@ namespace DocMix.Services
 
         public void UpdatePagenum(string id, int num)
         {
-           // var filter = Builders<Doc>.Filter.Eq("_id", id);
-
             var update = Builders<Doc>.Update.Inc("PageNum", num);
 
             var result = _docs.UpdateOne(d=>d.ID==id, update);
