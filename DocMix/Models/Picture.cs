@@ -7,6 +7,6 @@ namespace DocMix.Models
 {
     public class Picture : Element
     {
-        public string Link { get; set; }
+        public string Content { get; set; }
     }
 }

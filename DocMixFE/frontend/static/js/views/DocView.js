@@ -10,11 +10,11 @@ export default class extends AbstractView {
         this.postId = params.id;
         this.currPage=params.pn-1;
         this.setTitle("Viewing Doc");
-        //this.currPage=0;
         this.currDoc=null;
         this.creator=false;
         this.pages = new Array();
         this.elid=0;
+        this.pictures=new Array();
     }
 
 
@@ -38,7 +38,7 @@ export default class extends AbstractView {
             html=`
                 <h1>Doc: ${doc.name}</h1>
                 <br/>
-                <img src="https://drive.google.com/file/d/1ZzBjx_Opxe9WlielFCT80zeQOa-rYnj0/view?usp=sharing" alt="nece">
+                <img id="testimg" alt="nece">
                 <table class="table table-striped">
                     <thead>
                         <tr>
@@ -94,7 +94,7 @@ export default class extends AbstractView {
                     this.pages[this.currPage].Elements.forEach(element => {
                         if(element.Text==null)
                         {
-                            html+=`<img src="${element.Link}" align=centre alt="Error loading picture"><br/>`;
+                            html+=`<img src="${element.content}" align=centre alt="Error loading picture"><br/>`;
                         }
                         else
                         {
@@ -122,7 +122,7 @@ export default class extends AbstractView {
                     this.pages[this.currPage].Elements.forEach(element => {
                         if(element.Text==null)
                         {
-                            html+=`<img src="${element.Link}" alt="Error loading picture"><br/>`;
+                            html+=`<img src="${element.content}" alt="Error loading picture"><br/>`;
                         }
                         else
                         {
@@ -137,7 +137,7 @@ export default class extends AbstractView {
                     this.pages[this.currPage].Elements.forEach(element => {
                         if(element.Text==null)
                         {
-                            html+=`<input type="file" id="${element.ID}" class="${element.ID}" value=${element.Link} style="width:90%">
+                            html+=`<input type="file" id="${element.ID}" class="${element.ID}" accept=".jpg, .jpeg, .png" style="width:90%">
                             <button type="submit" class="${element.ID} btn btn-danger" style="width:7%" delelemBtn>x</button>
                             <br/>`;
                         }
@@ -244,7 +244,10 @@ export default class extends AbstractView {
             pic.id=++this.elid;
             pic.className=pic.id;
             pic.style.width="90%";
+            pic.accept=".jpg, .jpeg, .png";
             form.appendChild(pic);
+
+            pic.addEventListener('change', event => this.readpic(event));
 
             const delem = document.createElement("button");
             delem.type="submit";
@@ -276,17 +279,18 @@ export default class extends AbstractView {
         {
             const child=form.children[z];
             const id= parseInt(child.id);
-            const tmp = child.value;
 
             if(child.nodeName=="TEXTAREA")
             {
-                const text = new Paragraph(id, tmp);
+                const text = new Paragraph(id, child.value);
                 elems.push(text);
             }
             else if(child.nodeName=="INPUT")
             {
-                const img = new Picture(id, tmp);
-                elems.push(img);
+                const picture = this.pictures.find(p=>p.id===child.id);
+                console.log(this.pictures.find(p=>p.id===child.id));
+
+                elems.push(picture);
             }
         };
 
@@ -339,5 +343,18 @@ export default class extends AbstractView {
                     this.ToPage(this.currPage+1);
             }   
         });
+    }
+
+    readpic(event)
+    {      
+        const id = event.target.id;
+
+        var reader = new FileReader();
+        reader.addEventListener('load', (event) => {
+            const pic= new Picture(id, event.target.result);
+            this.pictures.push(pic);
+        });
+
+        reader.readAsDataURL(event.target.files[0]);
     }
 }

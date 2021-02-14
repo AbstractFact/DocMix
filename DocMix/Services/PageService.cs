@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using DocMix.Models;
+using Microsoft.AspNetCore.Http;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using Newtonsoft.Json;
@@ -34,8 +36,36 @@ namespace DocMix.Services
             return pag;
         }
 
-        public void Update(string id, Page newpag) =>
+        public void Update(string id, Page newpag)
+        {
+            newpag.Elements.ForEach(el =>
+            {
+                if(el.Text==null)
+                {
+                    var tmp = ((Picture)el).Content.Substring(((Picture)el).Content.IndexOf(',') + 1);
+                    //var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(tmp);
+                    //var content = System.Convert.ToBase64String(plainTextBytes);
+
+                    if (tmp.Length!=0)
+                    {
+                        string path = "C:\\Users\\jovan\\Desktop\\" + Path.GetRandomFileName();
+
+                        //using (var stream = new FileStream(path, FileMode.Create))
+                        //{
+
+                        Byte[] bytes = Convert.FromBase64String(tmp);
+                        File.WriteAllBytes(path, bytes);
+
+                        ((Picture)el).Content = path;
+
+                            //CopyTo(0, tmp, 0, tmp.Length);
+                        //}
+                    }
+                }
+            });
+
            _pages.ReplaceOne(d => d.ID == id, newpag);
+        }
 
         public void Remove(Page pag) =>
             _pages.DeleteOne(d => d.ID == pag.ID);
