@@ -3,7 +3,7 @@ import Docs from "./views/Docs.js";
 import DocView from "./views/DocView.js";
 import Login from "./views/Login.js";
 import Signup from "./views/Signup.js";
-import MyDocs from "./views/MyDocs.js";
+import MyProfile from "./views/MyProfile.js";
 import Profile from "./views/Profile.js";
 
 var view;
@@ -20,7 +20,7 @@ else
 {
     var html=document.body.querySelector(".topnav").innerHTML;
     html+=
-    `<a href="/mydocs" id="mydocs" class="nav__link" data-link>My Docs</a>
+    `<a href="/myprofile" id="myprofile" class="nav__link" data-link>My Profile</a>
     <a href="/" id="logout" class="nav__link" logout>Logout</a>`;
     document.body.querySelector(".topnav").innerHTML=html;
 }
@@ -46,7 +46,7 @@ const router = async () => {
         { path: "/", view: Home },
         { path: "/docs", view: Docs },
         { path: "/docs/:id/:pn", view: DocView },
-        { path: "/mydocs", view: MyDocs },
+        { path: "/myprofile", view: MyProfile },
         { path: "/profile/:id", view: Profile },
         { path: "/login", view: Login },
         { path: "/signup", view: Signup }
@@ -165,6 +165,16 @@ document.addEventListener("DOMContentLoaded", () => {
             e.preventDefault();
             handleFilter();
         }
+
+        if (e.target.matches("[editInfoBtn]")) {
+            e.preventDefault();
+            handleEditInfo();
+        }
+
+        if (e.target.matches("[delUserBtn]")) {
+            e.preventDefault();
+            handleDeleteUser();
+        }
     });
 
     router();
@@ -235,4 +245,15 @@ async function handleDeletePage()
 async function handleFilter()
 {
     await view.Filter();
+}
+
+async function handleEditInfo()
+{
+    await view.EditInfo();
+}
+
+async function handleDeleteUser()
+{
+    await view.DeleteUser();
+    logout();
 }

@@ -12,19 +12,23 @@ export default class extends AbstractView {
        var html;
 
        html=`
-       <form id="login-form">
+       <div class="container">
+       <form id="login-form" style="align:center;">
             <div class="container">
                 <div class="inputitem">
-                    <label for="uname"><b>Username</b></label>
-                    <input type="text" placeholder="Enter Username" name="uname" id="login-username" required>
+                    <label for="uname"><b>Username:</b></label>
+                    <input type="text" style="width:100%;" placeholder="Enter Username" name="uname" id="login-username" required>
                 </div>
                 <div class="inputitem">
-                    <label for="psw"><b>Password</b></label>
-                    <input type="password" placeholder="Enter Password" name="psw" id="login-password" required>
+                    <label for="psw"><b>Password:</b></label>
+                    <input type="password" style="width:100%;" placeholder="Enter Password" name="psw" id="login-password" required>
                 </div>
+            </div>
+            <div class="container">
                 <button class="inputitem" type="submit" loginbtn>Login</button>
             </div>
-        </form>`;
+        </form>
+        </div>`;
 
         return html;
     }
@@ -56,7 +60,7 @@ export default class extends AbstractView {
             localStorage.user=JSON.stringify(user);
             localStorage.logged=1;
 
-            alert("Welcome to DocMix " + username);
+            alert("Welcome to DocMix " + user.name);
         }                                                   
     }     
 }

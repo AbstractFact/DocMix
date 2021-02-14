@@ -25,6 +25,19 @@ namespace DocMix.Controllers
         public ActionResult<List<User>> Get() =>
             _usersService.Get();
 
+        [HttpGet("GetUserFull/{id:length(24)}")]
+        public ActionResult<User> GetUserFull(string id)
+        {
+            var user = _usersService.GetUserFull(id);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            return user;
+        }
+
         [HttpGet("{id:length(24)}", Name = "GetUser")]
         public ActionResult<UserDTO> Get(string id)
         {
@@ -51,17 +64,6 @@ namespace DocMix.Controllers
             return Ok(users);
         }
 
-        //[HttpPost("GetUserDocsFiltered/{id}")]
-        //public ActionResult<List<MyDoc>> GetUserDocsFiltered([FromBody] FiltersDTO filters, string id)
-        //{
-        //    List<MyDoc> res = _usersService.GetUserDocsFiltered(id, filters);
-
-        //    if (res != null)
-        //        return Ok(res);
-        //    else
-        //        return NotFound();
-        //}
-
         [HttpPost]
         public ActionResult<User> Create(User user)
         {
@@ -85,8 +87,8 @@ namespace DocMix.Controllers
             return NoContent();
         }
 
-        [HttpDelete("{id:length(24)}")]
-        public IActionResult Delete(string id)
+        [HttpPut("EditUserInfo/{id:length(24)}")]
+        public IActionResult EditUserInfo([FromBody] EditUserInfoDTO info, string id)
         {
             var user = _usersService.Get(id);
 
@@ -95,9 +97,24 @@ namespace DocMix.Controllers
                 return NotFound();
             }
 
-            _usersService.Remove(user.ID);
+            _usersService.EditUserInfo(id, user, info);
 
             return NoContent();
+        }
+
+        [HttpDelete("{id:length(24)}")]
+        public IActionResult Delete(string id)
+        {
+            var user = _usersService.GetUserFull(id);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            _usersService.Remove(user);
+
+            return Ok();
         }
 
         [HttpPost("Login")]

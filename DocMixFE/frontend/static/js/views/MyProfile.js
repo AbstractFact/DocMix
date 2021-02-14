@@ -4,7 +4,7 @@ import {MyDoc} from "../models/MyDoc.js";
 export default class extends AbstractView {
     constructor(params) {
         super(params);
-        this.setTitle("My Docs");
+        this.setTitle("My Profile");
         this.entries=new Array();
     }
 
@@ -14,25 +14,54 @@ export default class extends AbstractView {
         i=0;
 
         html=`
-        <h1>My Docs</h1>
+        <h1>My Profile</h1>
         <br/>
-        <div style="display:inline-block; width:70%;">
+        <div style="display:inline-block; width:100%;">
         <table class="table table-striped" style="width:100%">
             <thead>
                 <tr>
-                <th scope="col">#</th>
                 <th scope="col">Name</th>
-                <th scope="col">Category</th>
-                <th scope="col">Access</th>
+                <th scope="col">Country</th>
+                <th scope="col">Password</th>
+                <th scope="col"></th>
+                <th scope="col"></th>
                 </tr>
             </thead>
-            <tbody id="tcontent">`;
+            <tbody id="tinfo">`;
 
-        if(localStorage.user!=0)
-        {
-            await fetch("https://localhost:44397/api/User/GetUserDocs/"+JSON.parse(localStorage.user).id, {method: "GET"})
+        await fetch("https://localhost:44397/api/User/GetUserFull/"+JSON.parse(localStorage.user).id, {method: "GET"})
             .then(p => p.json().then(data => {
-                data.forEach(d => {
+
+                html+=`
+                <tr id="info">
+                <td>${data["Name"]}</td>
+                <td><input id="country" type="text" value="${data["Country"]}"></td>
+                <td><input id="password" type="password" value="${data["Password"]}"></td>
+                <td>
+                    <button type="submit"  class="btn btn-danger" delUserBtn>Delete</button>
+                </td>
+                <td>
+                    <button type="submit" class="btn btn-success" editInfoBtn>Save</button>
+                </td>
+                </tr>
+                </tbody>
+                </table>
+                </div>`;
+
+                html+=`
+                <div style="display:inline-block; width:70%;">
+                <table class="table table-striped" style="width:100%">
+                    <thead>
+                        <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Category</th>
+                        <th scope="col">Access</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tcontent">`;
+
+                data["MyDocs"].forEach(d => {
                     const doc = new MyDoc(d["ID"], d["Name"], d["Category"], d["Public"]);
                     this.entries.push(doc);
 
@@ -45,7 +74,6 @@ export default class extends AbstractView {
                         </tr>`;
                 });
             }));
-        }
 
         html+=`</tbody>
         </table>
@@ -128,5 +156,37 @@ export default class extends AbstractView {
                     </tr>`;
             });
         }));
+    }
+
+    async EditInfo()
+    {
+        const row = document.body.querySelector("#info");
+        const country = row.querySelector("#country").value;
+        const password = row.querySelector("#password").value;
+
+        await fetch("https://localhost:44397/api/User/EditUserInfo/"+JSON.parse(localStorage.user).id, {method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ "country": country, "password": password })
+        })
+        .then(p => {
+            if(p.ok)
+            {
+                alert("Data updated!");
+                window.location.reload();
+            }
+        });
+    }
+
+    async DeleteUser()
+    {
+        await fetch("https://localhost:44397/api/User/"+JSON.parse(localStorage.user).id, {method: "Delete" })
+        .then(p => {
+            if(p.ok)
+            {
+                alert("Account deleted!");
+            }
+        });
     }
 }

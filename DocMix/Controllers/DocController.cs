@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using DocMix.Services;
 using DocMix.Models;
+using DocMix.DTOs;
 
 namespace DocMix.Controllers
 {
@@ -79,6 +80,17 @@ namespace DocMix.Controllers
             _pagesService.RemoveDocPages(id);
 
             return Ok();
+        }
+
+        [HttpPost("GetDocsFiltered")]
+        public ActionResult<List<Doc>> GetDocsFiltered([FromBody] DocFiltersDTO filters)
+        {
+            List<Doc> res = _docsService.GetDocsFiltered(filters);
+
+            if (res != null)
+                return Ok(res);
+            else
+                return NotFound();
         }
     }
 }

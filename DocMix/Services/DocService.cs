@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DocMix.DTOs;
 using DocMix.Models;
 using MongoDB.Bson;
 using MongoDB.Driver;
@@ -67,6 +68,20 @@ namespace DocMix.Services
             var update = Builders<Doc>.Update.Inc("PageNum", num);
 
             var result = _docs.UpdateOne(d=>d.ID==id, update);
+        }
+
+        public List<Doc> GetDocsFiltered(DocFiltersDTO filters)
+        {
+            List<Doc> docs = _docs.Find(d=> true).ToList();
+
+            if (filters.Name != "")
+                docs = docs.Where(d => d.Name == filters.Name).ToList();
+            if (filters.Category != "0")
+                docs = docs.Where(d => d.Category == filters.Category).ToList();
+            if (filters.Access != "0")
+                docs = docs.Where(d => (d.Public ? "Public" : "Private") == "Public").ToList();
+
+            return docs;
         }
     }
 }

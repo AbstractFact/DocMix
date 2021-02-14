@@ -11,6 +11,8 @@ namespace DocMix.Services
     public class UserService
     {
         private readonly IMongoCollection<User> _users;
+        private readonly IMongoCollection<Doc> _docs;
+        private readonly IMongoCollection<Page> _pages;
 
         public UserService(IDocMixDatabaseSettings settings)
         {
@@ -18,10 +20,18 @@ namespace DocMix.Services
             var database = client.GetDatabase(settings.DatabaseName);
 
             _users = database.GetCollection<User>("Users");
+            _docs = database.GetCollection<Doc>("Docs");
+            _pages = database.GetCollection<Page>("Pages");
         }
 
         public List<User> Get() =>
             _users.Find(u => true).ToList();
+
+        public User GetUserFull(string id)
+        {
+            User usr = _users.Find(u => u.ID == id).FirstOrDefault();
+            return usr;
+        }
 
         public User Get(string id)
         {
@@ -60,8 +70,17 @@ namespace DocMix.Services
         public void Update(string id, User newuser) =>
            _users.ReplaceOne(u => u.ID == id, newuser);
 
-        public void Remove(User user) =>
+        public void Remove(User user)
+        {
+            //List<Doc> docs = _docs.Find();
+            user.MyDocs.ForEach(doc =>
+            {
+                _pages.DeleteMany(p => p.DocumentID == doc.ID);
+                _docs.DeleteOne(d => d.ID == doc.ID);
+            });
+            
             _users.DeleteOne(u => u.ID == user.ID);
+        }
 
         public void Remove(string id) =>
             _users.DeleteOne(u => u.ID == id);
@@ -120,6 +139,14 @@ namespace DocMix.Services
             //var update = Builders<User>.Update("PageNum", num);
 
             _users.UpdateOne(filter, update);
+        }
+
+        public void EditUserInfo(string id, User newuser, EditUserInfoDTO info)
+        {
+            newuser.Country = info.Country;
+            newuser.Password = info.Password;
+
+            _users.ReplaceOne(u => u.ID == id, newuser);
         }
     }
 }
