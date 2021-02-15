@@ -22,8 +22,25 @@ namespace DocMix.Controllers
         }
 
         [HttpGet]
-        public ActionResult<List<User>> Get() =>
-            _usersService.Get();
+        public ActionResult<List<UserHomeDTO>> Get()
+        {
+            List<User> users = _usersService.Get();
+
+            if (users == null)
+            {
+                return NotFound();
+            }
+
+            List<UserHomeDTO> userdtos = new List<UserHomeDTO>();
+
+            foreach (User us in users)
+            {
+                userdtos.Add(new UserHomeDTO(us));
+            }
+
+            return Ok(userdtos);
+        }
+            
 
         [HttpGet("GetUserFull/{id:length(24)}")]
         public ActionResult<User> GetUserFull(string id)
@@ -52,24 +69,32 @@ namespace DocMix.Controllers
         }
 
         [HttpPost("GetUsersFiltered")]
-        public ActionResult<List<UserDTO>> GetUsersFiltered([FromBody] UserFiltersDTO filters)
+        public ActionResult<List<UserHomeDTO>> GetUsersFiltered([FromBody] UserFiltersDTO filters)
         {
-            List<UserDTO> users = _usersService.GetUsersFiltered(filters);
+            List<User> users = _usersService.GetUsersFiltered(filters);
 
             if (users == null)
             {
                 return NotFound();
             }
 
-            return Ok(users);
+            List<UserHomeDTO> userdtos = new List<UserHomeDTO>();
+
+            foreach (User us in users)
+            {
+                userdtos.Add(new UserHomeDTO(us));
+            }
+
+            return Ok(userdtos);
         }
 
         [HttpPost]
-        public ActionResult<User> Create(User user)
+        public ActionResult<UserLoggedDTO> Create(User user)
         {
-            _usersService.Create(user);
-
-            return CreatedAtRoute("GetUser", new { id = user.ID.ToString() }, user);
+            User usr=_usersService.Create(user);
+            if (usr == null)
+                return BadRequest();
+            return new UserLoggedDTO(usr);
         }
 
         [HttpPut("{id:length(24)}")]
@@ -118,12 +143,12 @@ namespace DocMix.Controllers
         }
 
         [HttpPost("Login")]
-        public ActionResult<User> Login([FromBody] List<string> user)
+        public ActionResult<UserLoggedDTO> Login([FromBody] UserLoginDTO login)
         {
-            User res = _usersService.Login(user[0], user[1]);
+            User res = _usersService.Login(login.Username, login.Password);
 
             if (res!=null)
-                return Ok(res);
+                return Ok(new UserLoggedDTO(res));
             else
                 return NotFound();
         }

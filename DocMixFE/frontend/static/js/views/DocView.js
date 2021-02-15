@@ -1,6 +1,5 @@
 import AbstractView from "./AbstractView.js";
 import {Doc} from "../models/Doc.js";
-import { Page } from "../models/Page.js";
 import { Paragraph } from "../models/Paragraph.js";
 import { Picture } from "../models/Picture.js";
 
@@ -93,7 +92,7 @@ export default class extends AbstractView {
                     this.pages[this.currPage].Elements.forEach(element => {
                         if(element.Text==null)
                         {
-                            html+=`<img src="${element.content}" align=centre alt="Error loading picture"><br/>`;
+                            html+=`<img src="${element.Content}" align=centre alt="Error loading picture" style="width:100%"><br/>`;
                         }
                         else
                         {
@@ -121,8 +120,7 @@ export default class extends AbstractView {
                     this.pages[this.currPage].Elements.forEach(element => {
                         if(element.Text==null)
                         {
-                            console.log(element);
-                            html+=`<img src="${element.Content}" alt="Error loading picture"><br/>`;
+                            html+=`<img src="${element.Content}" alt="Error loading picture" style="width:100%"><br/>`;
                         }
                         else
                         {
@@ -289,16 +287,18 @@ export default class extends AbstractView {
             {
                 const picture = this.pictures.find(p=>p.id===child.id);
                 console.log(picture);
+                // if(!picture)
+                //     console.log(picture);
                 elems.push(picture);
             }
         };
 
-        await fetch("https://localhost:44397/api/Page/Update/"+this.pages[this.currPage].ID, { method: "PUT",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({"id":this.pages[this.currPage].ID, "documentid":this.currDoc.id, "position":this.pages[this.currPage].Position, "elements": elems})
-        }).then(res=>{if (res.ok) this.ToPage(this.currPage+1);});
+        // await fetch("https://localhost:44397/api/Page/Update/"+this.pages[this.currPage].ID, { method: "PUT",
+        //     headers: {
+        //         "Content-Type": "application/json"
+        //     },
+        //     body: JSON.stringify({"id":this.pages[this.currPage].ID, "documentid":this.currDoc.id, "position":this.pages[this.currPage].Position, "elements": elems})
+        // }).then(res=>{if (res.ok) this.ToPage(this.currPage+1);});
     }
 
     AddPage()

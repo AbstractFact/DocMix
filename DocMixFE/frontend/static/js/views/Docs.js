@@ -15,37 +15,8 @@ export default class extends AbstractView {
 
         html=`
         <h1>Public Docs</h1>
-        <br/>`;
-
-        if(localStorage.logged!=0)
-            html+=`
-            <form id="adddoc-form" style="width:100%">
-            <div id="container1">
-                <div>
-                    <label for="inputName">Name:</label>
-                    <input type="text" style="width:80%" class="form-control" id="inputName" placeholder="Name">
-                </div>
-                <div style="width:30%">
-                    <label for="inputCategory">Category:</label>
-                    <select style="width:80%" id="inputCategory" class="form-control">
-                        <option selected>Select Category</option>
-                        <option>Note</option>
-                        <option>List</option>
-                        <option>Novel</option>
-                        <option>Picturary</option>
-                        <option>Document</option>
-                    </select>
-                </div>
-                <div>
-                    <input type="checkbox" id="inputPublic" name="inputPublic" checked>
-                    <label for="inputPublic">Public</label>
-                </div>
-                <button type="submit" class="btn btn-primary" style="width:12%" addDocBtn>Add Doc</button>
-            </div>
-            </form>
-            <br/>`;
-
-        html+=`<div style="display:inline-block; width:70%;">
+        <br/>
+        <div style="display:inline-block; width:70%;">
         <table class="table table-striped" style="width:100%">
             <thead>
                 <tr>
@@ -108,34 +79,12 @@ export default class extends AbstractView {
         return html;
     }
 
-    async AddDoc()
-    {
-        const addDocForm = document.querySelector('#adddoc-form');
-        const name = addDocForm['inputName'].value;
-        const category = addDocForm['inputCategory'].value;
-        const pub = addDocForm['inputPublic'].checked;
-
-        const response =  await fetch("https://localhost:44397/api/Doc", { method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({ "name": name, "category": category, "author": JSON.parse(localStorage.user), "pagenum": 1, "public": pub})
-        });
-
-        if (response.ok) {
-            addDocForm.reset();
-            alert("Doc "+name+" added to database!");
-        }   
-    }
-
     async Filter()
     {
         var i=0;
         const filterForm = document.querySelector('#filter-form');
         const name = filterForm['inputName'].value;
         const category = filterForm['inputCategory'].value;
-        //const pnum1 = filterForm['inputPageNum1'].value;
-        //const pnum2 = filterForm['inputPageNum2'].value;
 
         const table = document.body.querySelector("#tcontent");
         table.innerHTML=``;

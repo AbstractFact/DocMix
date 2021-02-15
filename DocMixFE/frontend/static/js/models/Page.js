@@ -3,7 +3,7 @@ export class Page {
         this.id = id;
         this.documentid = documentid;
         this.position = position;
-        this.elements = new Array(); //niz elemenata
+        this.elements = new Array(); 
         this.elements = elements;
     }
 }

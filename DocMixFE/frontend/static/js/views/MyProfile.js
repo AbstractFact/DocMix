@@ -35,8 +35,8 @@ export default class extends AbstractView {
                 html+=`
                 <tr id="info">
                 <td>${data["Name"]}</td>
-                <td><input id="country" type="text" value="${data["Country"]}"></td>
-                <td><input id="password" type="password" value="${data["Password"]}"></td>
+                <td><input id="country" type="text" value="${data["Country"]}" required></td>
+                <td><input id="password" type="password" value="${data["Password"]}" required></td>
                 <td>
                     <button type="submit"  class="btn btn-danger" delUserBtn>Delete</button>
                 </td>
@@ -46,7 +46,33 @@ export default class extends AbstractView {
                 </tr>
                 </tbody>
                 </table>
-                </div>`;
+                </div>
+                <form id="adddoc-form" style="width:100%">
+                <div id="container1">
+                    <div>
+                        <label for="inputNameAdd">Name:</label>
+                        <input type="text" style="width:80%" class="form-control" id="inputNameAdd" placeholder="Name">
+                    </div>
+                    <div style="width:30%">
+                        <label for="inputCategoryAdd">Category:</label>
+                        <select style="width:80%" id="inputCategoryAdd" class="form-control">
+                            <option selected>Select Category</option>
+                            <option>Note</option>
+                            <option>List</option>
+                            <option>Novel</option>
+                            <option>Picturary</option>
+                            <option>Document</option>
+                        </select>
+                    </div>
+                    <div>
+                        <input type="checkbox" id="inputPublicAdd" name="inputPublic" checked>
+                        <label for="inputPublicAdd">Public</label>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width:12%" addDocBtn>Add Doc</button>
+                </div>
+                </form>
+                <br/>`
+                ;
 
                 html+=`
                 <div style="display:inline-block; width:70%;">
@@ -113,6 +139,26 @@ export default class extends AbstractView {
         return html;
     }
 
+    async AddDoc()
+    {
+        const addDocForm = document.querySelector('#adddoc-form');
+        const name = addDocForm['inputNameAdd'].value;
+        const category = addDocForm['inputCategoryAdd'].value;
+        const pub = addDocForm['inputPublicAdd'].checked;
+
+        const response =  await fetch("https://localhost:44397/api/Doc", { method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ "name": name, "category": category, "author": JSON.parse(localStorage.user), "pagenum": 1, "public": pub})
+        });
+
+        if (response.ok) {
+            addDocForm.reset();
+            alert("Doc "+  name + " added to database!");
+        }   
+    }
+
     async Filter()
     {
         var i=0;
@@ -163,6 +209,12 @@ export default class extends AbstractView {
         const row = document.body.querySelector("#info");
         const country = row.querySelector("#country").value;
         const password = row.querySelector("#password").value;
+
+        if(country=="" || password=="")
+        {
+            alert("Country and password fields can not be empty.");
+            return;
+        }
 
         await fetch("https://localhost:44397/api/User/EditUserInfo/"+JSON.parse(localStorage.user).id, {method: "PUT",
             headers: {

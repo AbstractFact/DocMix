@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using DocMix.Models;
 using MongoDB.Driver;
 using DocMix.DTOs;
+using MongoDB.Bson;
 
 namespace DocMix.Services
 {
@@ -24,8 +25,12 @@ namespace DocMix.Services
             _pages = database.GetCollection<Page>("Pages");
         }
 
-        public List<User> Get() =>
-            _users.Find(u => true).ToList();
+        public List<User> Get()
+        {
+            List<User> users = _users.Find(u => true).ToList();
+            return users;
+        }
+            
 
         public User GetUserFull(string id)
         {
@@ -41,7 +46,7 @@ namespace DocMix.Services
             return usr;
         }
 
-        public List<UserDTO> GetUsersFiltered(UserFiltersDTO filters)
+        public List<User> GetUsersFiltered(UserFiltersDTO filters)
         {
             List<User> users = _users.Find(u => true).ToList();
 
@@ -50,21 +55,19 @@ namespace DocMix.Services
             if (filters.Country!="")
                 users = users.Where(u => u.Country == filters.Country).ToList();
 
-
-            List<UserDTO> userdtos = new List<UserDTO>();
-
-            foreach(User us in users)
-            {
-                userdtos.Add(new UserDTO(us));
-            }
-            
-            return userdtos;
+            return users;
         }
 
         public User Create(User user)
         {
-            _users.InsertOne(user);
-            return user;
+            User usr = _users.Find(u => u.Username == user.Username).FirstOrDefault();
+            if(usr==null)
+            {
+                _users.InsertOne(user);
+                return user;
+            }
+
+            return null;
         }
 
         public void Update(string id, User newuser) =>
@@ -72,7 +75,6 @@ namespace DocMix.Services
 
         public void Remove(User user)
         {
-            //List<Doc> docs = _docs.Find();
             user.MyDocs.ForEach(doc =>
             {
                 _pages.DeleteMany(p => p.DocumentID == doc.ID);
@@ -130,13 +132,7 @@ namespace DocMix.Services
 
             var filter = Builders<User>.Filter.Eq(x => x.ID, doc.Author.ID) &
                 Builders<User>.Filter.ElemMatch(doc => doc.MyDocs, el => el.ID == doc.ID);
-
             var update = Builders<User>.Update.Set(doc => doc.MyDocs[-1], mdoc);
-
-            //Col.UpdateOne(filter, update);
-
-            //var update = Builders<User>.Update.Set(u => u.MyDocs, Builders<MyDoc>.Filter.Where(d => d.ID == doc))
-            //var update = Builders<User>.Update("PageNum", num);
 
             _users.UpdateOne(filter, update);
         }

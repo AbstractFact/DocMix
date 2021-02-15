@@ -54,8 +54,6 @@ namespace DocMix.Controllers
                             fs.Read(data, 0, data.Length);
                         }
 
-                        //fileInfo.Delete();
-
                         String file = Convert.ToBase64String(data);
 
                         var extension = element.Content.Substring(element.Content.IndexOf('.') + 1);
