@@ -38,7 +38,6 @@ export default class extends AbstractView {
             html=`
                 <h1>Doc: ${doc.name}</h1>
                 <br/>
-                <img id="testimg" alt="nece">
                 <table class="table table-striped">
                     <thead>
                         <tr>
@@ -122,7 +121,8 @@ export default class extends AbstractView {
                     this.pages[this.currPage].Elements.forEach(element => {
                         if(element.Text==null)
                         {
-                            html+=`<img src="${element.content}" alt="Error loading picture"><br/>`;
+                            console.log(element);
+                            html+=`<img src="${element.Content}" alt="Error loading picture"><br/>`;
                         }
                         else
                         {
@@ -288,8 +288,7 @@ export default class extends AbstractView {
             else if(child.nodeName=="INPUT")
             {
                 const picture = this.pictures.find(p=>p.id===child.id);
-                console.log(this.pictures.find(p=>p.id===child.id));
-
+                console.log(picture);
                 elems.push(picture);
             }
         };

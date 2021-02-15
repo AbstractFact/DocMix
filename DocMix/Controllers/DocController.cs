@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using DocMix.Services;
 using DocMix.Models;
 using DocMix.DTOs;
+using System.IO;
 
 namespace DocMix.Controllers
 {
@@ -39,6 +40,32 @@ namespace DocMix.Controllers
                 return NotFound();
             }
 
+            pages.ForEach(page =>
+            {
+                page.Elements.ForEach(element =>
+                {
+                    if (element.Text == null)
+                    {
+                        FileInfo fileInfo = new FileInfo(element.Content);
+                        byte[] data = new byte[fileInfo.Length];
+
+                        using (FileStream fs = fileInfo.OpenRead())
+                        {
+                            fs.Read(data, 0, data.Length);
+                        }
+
+                        //fileInfo.Delete();
+
+                        String file = Convert.ToBase64String(data);
+
+                        var extension = element.Content.Substring(element.Content.IndexOf('.') + 1);
+                        string el = "data:image/" + extension + ";base64," + file;
+
+                        element.Content = el;
+                    }
+
+                });
+            });
             return new {d=doc, p=pages};
         }
 

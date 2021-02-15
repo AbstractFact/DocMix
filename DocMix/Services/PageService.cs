@@ -42,24 +42,17 @@ namespace DocMix.Services
             {
                 if(el.Text==null)
                 {
-                    var tmp = ((Picture)el).Content.Substring(((Picture)el).Content.IndexOf(',') + 1);
-                    //var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(tmp);
-                    //var content = System.Convert.ToBase64String(plainTextBytes);
+                    var extension = el.Content.Substring(el.Content.IndexOf('/')+1, el.Content.IndexOf(';')- el.Content.IndexOf('/') -1);
+                    var tmp = el.Content.Substring(el.Content.IndexOf(',') + 1);
 
                     if (tmp.Length!=0)
                     {
-                        string path = "C:\\Users\\jovan\\Desktop\\" + Path.GetRandomFileName();
-
-                        //using (var stream = new FileStream(path, FileMode.Create))
-                        //{
+                        string path = string.Format("{0}."+ extension, "C:\\Users\\ivana\\Desktop\\"+Path.GetRandomFileName().Replace(".", string.Empty));
 
                         Byte[] bytes = Convert.FromBase64String(tmp);
                         File.WriteAllBytes(path, bytes);
 
-                        ((Picture)el).Content = path;
-
-                            //CopyTo(0, tmp, 0, tmp.Length);
-                        //}
+                        el.Content = path;
                     }
                 }
             });
@@ -75,7 +68,6 @@ namespace DocMix.Services
 
         public void RemoveDocPages(string docid) =>
             _pages.DeleteMany(d => d.DocumentID == docid);
-
 
         public List<Page> GetPages(string docid)=>
             _pages.Find(p => p.DocumentID == docid).ToList();
