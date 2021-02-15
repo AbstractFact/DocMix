@@ -131,21 +131,6 @@ export default class extends AbstractView {
                     html+=`
                     </div>
                     <div id="content" style="display:block; width:50%; float:left;">`;
-                    
-                    // this.pages[this.currPage].Elements.forEach(element => {
-                    //     if(element.Text==null)
-                    //     {
-                    //         html+=`<input type="file" id="${element.ID}" class="${element.ID}" accept=".jpg, .jpeg, .png" style="width:90%">
-                    //         <button type="submit" class="${element.ID} btn btn-danger" style="width:7%" delelemBtn>x</button>
-                    //         <br/>`;
-                    //     }
-                    //     else
-                    //     {
-                    //         html+=`<textarea id="${element.ID}" class="${element.ID}" style="width:90%">${element.Text}</textarea>
-                    //         <button type="submit" class="${element.ID} btn btn-danger" style="width:7%" delelemBtn>x</button>
-                    //         <br/>`;
-                    //     }
-                    // });
 
                     html+=`
                     </div>

@@ -1,0 +1,14 @@
+Pre testiranja promeniti putanju na kojoj ce biti sacuvane slike koje korisnik upload-uje na serveru
+(fajl "PageService.cs", linija 50.).
+
+U fajlu "appsettings.json" nalazi se connection string.
+
+Takodje je potrebno pokrenuti i IIS Express server u okviru Microsoft Visual Studio-a u kome je ucitan projekat "DocMix".
+
+Po potrebi promeniti port u fajlu "server.js", linija 12.
+
+Pre pokretanja projekta potrebno je pozicionirati se u folder projekta "DocMixFE" i u terminalu(powershell, cmd) ukucati:
+	npm install express
+nakon toga pokrenuti aplikaciju komandom:
+	node server.js
+	
