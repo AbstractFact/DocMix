@@ -131,21 +131,21 @@ export default class extends AbstractView {
                     html+=`
                     </div>
                     <div id="content" style="display:block; width:50%; float:left;">`;
-
-                    this.pages[this.currPage].Elements.forEach(element => {
-                        if(element.Text==null)
-                        {
-                            html+=`<input type="file" id="${element.ID}" class="${element.ID}" accept=".jpg, .jpeg, .png" style="width:90%">
-                            <button type="submit" class="${element.ID} btn btn-danger" style="width:7%" delelemBtn>x</button>
-                            <br/>`;
-                        }
-                        else
-                        {
-                            html+=`<textarea id="${element.ID}" class="${element.ID}" style="width:90%">${element.Text}</textarea>
-                            <button type="submit" class="${element.ID} btn btn-danger" style="width:7%" delelemBtn>x</button>
-                            <br/>`;
-                        }
-                    });
+                    
+                    // this.pages[this.currPage].Elements.forEach(element => {
+                    //     if(element.Text==null)
+                    //     {
+                    //         html+=`<input type="file" id="${element.ID}" class="${element.ID}" accept=".jpg, .jpeg, .png" style="width:90%">
+                    //         <button type="submit" class="${element.ID} btn btn-danger" style="width:7%" delelemBtn>x</button>
+                    //         <br/>`;
+                    //     }
+                    //     else
+                    //     {
+                    //         html+=`<textarea id="${element.ID}" class="${element.ID}" style="width:90%">${element.Text}</textarea>
+                    //         <button type="submit" class="${element.ID} btn btn-danger" style="width:7%" delelemBtn>x</button>
+                    //         <br/>`;
+                    //     }
+                    // });
 
                     html+=`
                     </div>
@@ -286,19 +286,23 @@ export default class extends AbstractView {
             else if(child.nodeName=="INPUT")
             {
                 const picture = this.pictures.find(p=>p.id===child.id);
-                console.log(picture);
-                // if(!picture)
-                //     console.log(picture);
-                elems.push(picture);
+                if(picture)
+                    elems.push(picture);
+                else
+                {
+                    const el = this.pages[this.currPage].Elements.find(el=>el.ID==id);
+                    if(el)
+                        elems.push(el);
+                }
             }
         };
 
-        // await fetch("https://localhost:44397/api/Page/Update/"+this.pages[this.currPage].ID, { method: "PUT",
-        //     headers: {
-        //         "Content-Type": "application/json"
-        //     },
-        //     body: JSON.stringify({"id":this.pages[this.currPage].ID, "documentid":this.currDoc.id, "position":this.pages[this.currPage].Position, "elements": elems})
-        // }).then(res=>{if (res.ok) this.ToPage(this.currPage+1);});
+        await fetch("https://localhost:44397/api/Page/Update/"+this.pages[this.currPage].ID, { method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({"id":this.pages[this.currPage].ID, "documentid":this.currDoc.id, "position":this.pages[this.currPage].Position, "elements": elems})
+        }).then(res=>{if (res.ok) this.ToPage(this.currPage+1);});
     }
 
     AddPage()
@@ -352,8 +356,61 @@ export default class extends AbstractView {
         reader.addEventListener('load', (event) => {
             const pic= new Picture(id, event.target.result);
             this.pictures.push(pic);
+            const lab = document.getElementsByClassName(id+" label");
+            if(lab[0])
+                lab[0].innerText="Modified: ";
         });
 
         reader.readAsDataURL(event.target.files[0]);
+    }
+
+    getCurrentContent()
+    {
+        const form = document.querySelector("#content");
+        this.pages[this.currPage].Elements.forEach(element => {
+            if(element.Text==null)
+            {
+                const pic = document.createElement("input");
+                pic.type="file";
+                pic.id=element.ID;
+                pic.className=element.ID;
+                pic.style.width="80%";
+                pic.accept=".jpg, .jpeg, .png";
+                form.appendChild(pic);
+
+                pic.addEventListener('change', event => this.readpic(event));
+
+                const label=document.createElement("label");
+                label.innerText="Existing: ";
+                label.className=element.ID+" label";
+                label.style="float:left;";
+                form.appendChild(label);
+
+                const delem = document.createElement("button");
+                delem.type="submit";
+                delem.className=pic.id+" btn btn-danger";
+                delem.style.width="7%";
+                delem.setAttribute("delelembtn","");
+                delem.innerHTML="x";
+                form.appendChild(delem);
+            }
+            else
+            {
+                const tarea = document.createElement("textarea");
+                tarea.id=element.ID;
+                tarea.className=element.ID;
+                tarea.style.width="90%";
+                tarea.value=element.Text;
+                form.appendChild(tarea);
+
+                const delem = document.createElement("button");
+                delem.type="submit";
+                delem.className=tarea.id+" btn btn-danger";
+                delem.style.width="7%";
+                delem.setAttribute("delelembtn","");
+                delem.innerHTML="x";
+                form.appendChild(delem);
+            }
+        });
     }
 }

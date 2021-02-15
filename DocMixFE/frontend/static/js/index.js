@@ -72,11 +72,14 @@ const router = async () => {
     view = new match.route.view(getParams(match));
 
     document.querySelector("#app").innerHTML = await view.getHtml();
+    if(window.location.href.includes("docs/"))
+        view.getCurrentContent();
+
 };
 
 window.addEventListener("popstate", router);
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", () => {    
     document.body.addEventListener("keypress", e => {
         if(e.key==='Enter')
         {
