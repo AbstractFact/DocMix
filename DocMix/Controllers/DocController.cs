@@ -30,7 +30,7 @@ namespace DocMix.Controllers
             _docsService.Get();
 
         [HttpGet("{id:length(24)}", Name = "GetDoc")]
-        public ActionResult<object> Get(string id)
+        public ActionResult<FullDocDTO> Get(string id)
         {
             var doc = _docsService.Get(id);
             var pages = _pagesService.GetPages(id);
@@ -64,7 +64,7 @@ namespace DocMix.Controllers
 
                 });
             });
-            return new {d=doc, p=pages};
+            return new FullDocDTO(doc, pages);
         }
 
         [HttpPost]

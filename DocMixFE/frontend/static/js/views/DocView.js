@@ -23,8 +23,8 @@ export default class extends AbstractView {
         
         await fetch("https://localhost:44397/api/Doc/"+this.postId, {method: "GET"})
         .then(p => p.json().then(d => {
-            const doc = new Doc(d["d"]["ID"], d["d"]["Name"], d["d"]["Category"], d["d"]["Author"], d["d"]["PageNum"], d["d"]["Public"]);
-            this.pages=d["p"];
+            const doc = new Doc(d["Doc"]["ID"], d["Doc"]["Name"], d["Doc"]["Category"], d["Doc"]["Author"], d["Doc"]["PageNum"], d["Doc"]["Public"]);
+            this.pages=d["Pages"];
 
             this.currDoc=doc;
             this.elid=this.pages[this.currPage].Elements.length;
@@ -249,6 +249,8 @@ export default class extends AbstractView {
 
         const elems = form.getElementsByClassName(cls);
 
+        if(elems.length===3)
+            form.removeChild(elems[2]);
         form.removeChild(elems[1]);
         form.removeChild(elems[0]);
     }
@@ -373,7 +375,7 @@ export default class extends AbstractView {
 
                 const delem = document.createElement("button");
                 delem.type="submit";
-                delem.className=pic.id+" btn btn-danger";
+                delem.className=element.ID+" btn btn-danger";
                 delem.style.width="7%";
                 delem.setAttribute("delelembtn","");
                 delem.innerHTML="x";

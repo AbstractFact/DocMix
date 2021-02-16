@@ -38,6 +38,13 @@ namespace DocMix.Services
 
         public void Update(string id, Page newpag)
         {
+            Page oldPage = _pages.Find(d => d.ID==id).FirstOrDefault();
+            oldPage.Elements.ForEach(element =>
+            {
+                if (element.Text == null)
+                    File.Delete(element.Content);
+            });
+
             newpag.Elements.ForEach(el =>
             {
                 if(el.Text==null)
